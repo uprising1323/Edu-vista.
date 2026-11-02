@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Input Validation Script - EduVista</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
+    <style>
+        body {
+            background: linear-gradient(135deg, #0a1128 0%, #1a2456 50%, #0d1b3a 100%);
+            min-height: 100vh;
+            color: #fff;
+        }
+        .code-container {
+            background: rgba(15, 23, 42, 0.95);
+            border: 2px solid #ffd700;
+            border-radius: 15px;
+            padding: 30px;
+            margin: 30px auto;
+            max-width: 1200px;
+            box-shadow: 0 0 30px rgba(255, 215, 0, 0.3);
+        }
+        pre {
+            background: #0f172a;
+            padding: 20px;
+            border-radius: 10px;
+            overflow-x: auto;
+            border-left: 4px solid #ffd700;
+        }
+        code {
+            color: #ffd700;
+            font-family: 'Courier New', monospace;
+        }
+        .download-btn {
+            background: linear-gradient(135deg, #ffd700, #ffed4e);
+            color: #0a1128;
+            padding: 12px 30px;
+            border-radius: 25px;
+            font-weight: bold;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .download-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(255, 215, 0, 0.5);
+        }
+    </style>
+</head>
+<body>
+    <div class="code-container">
+        <h1 class="text-4xl font-bold text-center mb-6" style="color: #ffd700;">
+            <i class="fas fa-code"></i> Input Validation JavaScript
+        </h1>
+        <p class="text-center mb-8 text-gray-300">Copy this code and save it as <strong>input-validation.js</strong></p>
+        
+        <button class="download-btn mx-auto block mb-6" onclick="downloadJS()">
+            <i class="fas fa-download"></i> Download as input-validation.js
+        </button>
+
+        <pre><code id="jsCode">// Input Validation and Data Processing for Student Performance Predictor
+// Save this file as: input-validation.js
+
+// Initialize student data storage
+const studentData = {
+    userId: '',
+    attendance: 0,
+    testScores: [],
+    assignments: [],
+    events: [],
+    questionAnswers: [],
+    timestamp: null
+};
+
+// Load existing data from localStorage
+function loadStudentData() {
+    const stored = localStorage.getItem('studentData');
+    if (stored) {
+        const data = JSON.parse(stored);
+        Object.assign(studentData, data);
+        return data;
+    }
+    return null;
+}
+
+// Save data to localStorage
+function saveStudentData() {
+    studentData.timestamp = new Date().toISOString();
+    localStorage.setItem('studentData', JSON.stringify(studentData));
+}
+
+// Attendance validation and storage
+function validateAttendance(percentage) {
+    const num = parseFloat(percentage);
+    if (isNaN(num) || num < 0 || num > 100) {
+        return { valid: false, message: 'Please enter a valid percentage between 0 and 100' };
+    }
+    return { valid: true, value: num };
+}
+
+function saveAttendance(percentage) {
+    const validation = validateAttendance(percentage);
+    if (validation.valid) {
+        studentData.attendance = validation.value;
+        saveStudentData();
+        return { success: true, message: 'Attendance saved successfully!' };
+    }
+    return { success: false, message: validation.message };
+}
+
+// Test scores validation and storage
+function validateTestScore(obtained, maximum) {
+    const obtainedNum = parseFloat(obtained);
+    const maximumNum = parseFloat(maximum);
+    
+    if (isNaN(obtainedNum) || isNaN(maximumNum)) {
+        return { valid: false, message: 'Please enter valid numbers' };
+    }
+    if (obtainedNum < 0 || maximumNum <= 0) {
+        return { valid: false, message: 'Scores must be positive numbers' };
+    }
+    if (obtainedNum > maximumNum) {
+        return { valid: false, message: 'Obtained marks cannot exceed maximum marks' };
+    }
+    return { valid: true, obtained: obtainedNum, maximum: maximumNum };
+}
+
+function saveTestScore(testName, obtained, maximum) {
+    const validation = validateTestScore(obtained, maximum);
+    if (validation.valid) {
+        const percentage = (validation.obtained / validation.maximum) * 100;
+        studentData.testScores.push({
+            name: testName,
+            obtained: validation.obtained,
+            maximum: validation.maximum,
+            percentage: percentage.toFixed(2)
+        });
+        saveStudentData();
+        return { success: true, message: 'Test score saved successfully!', percentage: percentage.toFixed(2) };
+    }
+    return { success: false, message: validation.message };
+}
+
+// Assignment validation and storage
+function validateAssignment(obtained, maximum) {
+    return validateTestScore(obtained, maximum); // Same validation logic
+}
+
+function saveAssignment(assignmentName, obtained, maximum) {
+    const validation = validateAssignment(obtained, maximum);
+    if (validation.valid) {
+        const percentage = (validation.obtained / validation.maximum) * 100;
+        studentData.assignments.push({
+            name: assignmentName,
+            obtained: validation.obtained,
+            maximum: validation.maximum,
+            percentage: percentage.toFixed(2)
+        });
+        saveStudentData();
+        return { success: true, message: 'Assignment score saved successfully!', percentage: percentage.toFixed(2) };
+    }
+    return { success: false, message: validation.message };
+}
+
+// Event description validation and storage
+function validateEventDescription(description) {
+    const wordCount = description.trim().split(/\s+/).length;
+    if (description.trim().length === 0) {
+        return { valid: false, message: 'Please provide a description' };
+    }
+    if (wordCount < 50) {
+        return { valid: false, message: `Description too short. Current: ${wordCount} words. Minimum: 50 words.` };
+    }
+    if (wordCount > 250) {
+        return { valid: false, message: `Description too long. Current: ${wordCount} words. Maximum: 250 words.` };
+    }
+    return { valid: true, wordCount: wordCount };
+}
+
+function saveEvent(eventName, eventDate, description) {
+    const validation = validateEventDescription(description);
+    if (!eventName || !eventDate) {
+        return { success: false, message: 'Please fill in all fields' };
+    }
+    if (validation.valid) {
+        studentData.events.push({
+            name: eventName,
+            date: eventDate,
+            description: description,
+            wordCount: validation.wordCount
+        });
+        saveStudentData();
+        return { success: true, message: 'Event saved successfully!', wordCount: validation.wordCount };
+    }
+    return { success: false, message: validation.message };
+}
+
+// Question answers validation and storage
+function saveQuestionAnswer(questionNumber, answer) {
+    if (!answer || answer.trim().length === 0) {
+        return { success: false, message: 'Please provide an answer' };
+    }
+    
+    // Find if answer already exists for this question
+    const existingIndex = studentData.questionAnswers.findIndex(q => q.questionNumber === questionNumber);
+    
+    if (existingIndex !== -1) {
+        studentData.questionAnswers[existingIndex].answer = answer.trim();
+    } else {
+        studentData.questionAnswers.push({
+            questionNumber: questionNumber,
+            answer: answer.trim()
+        });
+    }
+    
+    saveStudentData();
+    return { success: true, message: 'Answer saved successfully!' };
+}
+
+// Calculate overall performance metrics
+function calculatePerformance() {
+    const data = loadStudentData();
+    if (!data) return null;
+    
+    // Calculate average test score
+    const avgTestScore = data.testScores.length > 0
+        ? data.testScores.reduce((sum, test) => sum + parseFloat(test.percentage), 0) / data.testScores.length
+        : 0;
+    
+    // Calculate average assignment score
+    const avgAssignmentScore = data.assignments.length > 0
+        ? data.assignments.reduce((sum, assign) => sum + parseFloat(assign.percentage), 0) / data.assignments.length
+        : 0;
+    
+    // Event participation score (out of 100)
+    const eventScore = Math.min(data.events.length * 20, 100); // Max 5 events for full score
+    
+    // Question completion score
+    const questionScore = (data.questionAnswers.length / 10) * 100;
+    
+    // Overall performance calculation (weighted average)
+    const overallScore = (
+        data.attendance * 0.25 +
+        avgTestScore * 0.30 +
+        avgAssignmentScore * 0.25 +
+        eventScore * 0.10 +
+        questionScore * 0.10
+    );
+    
+    return {
+        attendance: data.attendance,
+        avgTestScore: avgTestScore.toFixed(2),
+        avgAssignmentScore: avgAssignmentScore.toFixed(2),
+        eventScore: eventScore,
+        questionScore: questionScore,
+        overallScore: overallScore.toFixed(2),
+        totalTests: data.testScores.length,
+        totalAssignments: data.assignments.length,
+        totalEvents: data.events.length,
+        totalQuestions: data.questionAnswers.length
+    };
+}
+
+// Analyze strengths and weaknesses
+function analyzePerformance() {
+    const metrics = calculatePerformance();
+    if (!metrics) return null;
+    
+    const strengths = [];
+    const weaknesses = [];
+    const tips = [];
+    
+    // Analyze attendance
+    if (metrics.attendance >= 85) {
+        strengths.push('Excellent attendance record');
+    } else if (metrics.attendance >= 75) {
+        strengths.push('Good attendance');
+        tips.push('Try to maintain or improve your attendance to 85% or above');
+    } else {
+        weaknesses.push('Low attendance');
+        tips.push('Focus on improving attendance - aim for at least 85%');
+        tips.push('Regular attendance is crucial for academic success');
+    }
+    
+    // Analyze test scores
+    if (metrics.avgTestScore >= 80) {
+        strengths.push('Strong test performance');
+    } else if (metrics.avgTestScore >= 60) {
+        strengths.push('Moderate test scores');
+        tips.push('Review test preparation strategies to improve scores');
+    } else {
+        weaknesses.push('Test scores need improvement');
+        tips.push('Create a structured study schedule before tests');
+        tips.push('Practice with past papers and sample questions');
+    }
+    
+    // Analyze assignment scores
+    if (metrics.avgAssignmentScore >= 80) {
+        strengths.push('Excellent assignment completion');
+    } else if (metrics.avgAssignmentScore >= 60) {
+        strengths.push('Good assignment work');
+        tips.push('Allocate more time for assignment quality improvement');
+    } else {
+        weaknesses.push('Assignment scores need attention');
+        tips.push('Start assignments early to avoid last-minute rush');
+        tips.push('Seek clarification from teachers when needed');
+    }
+    
+    // Analyze event participation
+    if (metrics.eventScore >= 80) {
+        strengths.push('Active in extracurricular activities');
+    } else if (metrics.eventScore >= 40) {
+        strengths.push('Moderate event participation');
+        tips.push('Participate in more academic and cultural events');
+    } else {
+        weaknesses.push('Limited event participation');
+        tips.push('Engage in more campus activities for holistic development');
+        tips.push('Join clubs or societies aligned with your interests');
+    }
+    
+    // Analyze problem-solving
+    if (metrics.questionScore >= 80) {
+        strengths.push('Strong logical thinking skills');
+    } else {
+        weaknesses.push('Problem-solving skills need development');
+        tips.push('Practice logical reasoning and analytical problems regularly');
+        tips.push('Try puzzle-solving apps and brain training exercises');
+    }
+    
+    // Overall performance analysis
+    const overallScore = parseFloat(metrics.overallScore);
+    let performanceLevel = '';
+    let generalTips = [];
+    
+    if (overallScore >= 85) {
+        performanceLevel = 'Excellent';
+        generalTips.push('Maintain your excellent performance');
+        generalTips.push('Consider mentoring peers who need help');
+    } else if (overallScore >= 70) {
+        performanceLevel = 'Good';
+        generalTips.push('You are doing well, keep up the good work');
+        generalTips.push('Focus on areas identified for improvement');
+    } else if (overallScore >= 50) {
+        performanceLevel = 'Average';
+        generalTips.push('Significant room for improvement exists');
+        generalTips.push('Create a structured improvement plan');
+    } else {
+        performanceLevel = 'Needs Improvement';
+        generalTips.push('Immediate action required to improve performance');
+        generalTips.push('Seek guidance from teachers and counselors');
+    }
+    
+    return {
+        metrics: metrics,
+        performanceLevel: performanceLevel,
+        strengths: strengths,
+        weaknesses: weaknesses,
+        tips: tips.concat(generalTips)
+    };
+}
+
+// Clear all student data
+function clearAllData() {
+    localStorage.removeItem('studentData');
+    Object.keys(studentData).forEach(key => {
+        if (Array.isArray(studentData[key])) {
+            studentData[key] = [];
+        } else if (typeof studentData[key] === 'number') {
+            studentData[key] = 0;
+        } else {
+            studentData[key] = '';
+        }
+    });
+}
+
+// Export data for download
+function exportDataAsJSON() {
+    const data = loadStudentData();
+    if (!data) return null;
+    
+    const analysis = analyzePerformance();
+    const exportData = {
+        studentData: data,
+        analysis: analysis,
+        exportDate: new Date().toISOString()
+    };
+    
+    return JSON.stringify(exportData, null, 2);
+}
+
+// Utility function to count words
+function countWords(text) {
+    return text.trim().split(/\s+/).length;
+}
+
+// Real-time word counter for event descriptions
+function setupWordCounter(textareaId, counterId) {
+    const textarea = document.getElementById(textareaId);
+    const counter = document.getElementById(counterId);
+    
+    if (textarea && counter) {
+        textarea.addEventListener('input', function() {
+            const wordCount = countWords(this.value);
+            counter.textContent = `${wordCount} / 200 words`;
+            
+            if (wordCount < 50) {
+                counter.style.color = '#ff6b6b';
+            } else if (wordCount > 250) {
+                counter.style.color = '#ff6b6b';
+            } else {
+                counter.style.color = '#51cf66';
+            }
+        });
+    }
+}
+
+// Initialize on page load
+document.addEventListener('DOMContentLoaded', function() {
+    // Load existing data if available
+    loadStudentData();
+    
+    // Setup any word counters on the page
+    setupWordCounter('eventDescription', 'wordCounter');
+});
+
+// Export functions for use in other scripts
+if (typeof module !== 'undefined' && module.exports) {
+    module.exports = {
+        validateAttendance,
+        saveAttendance,
+        validateTestScore,
+        saveTestScore,
+        validateAssignment,
+        saveAssignment,
+        validateEventDescription,
+        saveEvent,
+        saveQuestionAnswer,
+        calculatePerformance,
+        analyzePerformance,
+        clearAllData,
+        exportDataAsJSON,
+        loadStudentData,
+        saveStudentData
+    };
+}</code></pre>
+    </div>
+
+    <script>
+        function downloadJS() {
+            const code = document.getElementById('jsCode').textContent;
+            const blob = new Blob([code], { type: 'text/javascript' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'input-validation.js';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
+            
+            // Show success message
+            const btn = event.target;
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<i class="fas fa-check"></i> Downloaded!';
+            btn.style.background = 'linear-gradient(135deg, #51cf66, #69db7c)';
+            setTimeout(() => {
+                btn.innerHTML = originalText;
+                btn.style.background = 'linear-gradient(135deg, #ffd700, #ffed4e)';
+            }, 2000);
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,698 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>About Us - EduVista</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: 'Poppins', sans-serif;
+      overflow-x: hidden;
+      background: #0a1628;
+      color: #fff;
+    }
+    
+    /* Universe Background */
+    .universe-bg {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(ellipse at bottom, #1B2735 0%, #090A0F 100%);
+      z-index: -1;
+      overflow: hidden;
+    }
+    
+    /* Stars */
+    .stars {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+    }
+    
+    .star {
+      position: absolute;
+      width: 2px;
+      height: 2px;
+      background: white;
+      border-radius: 50%;
+      animation: twinkle 3s infinite;
+    }
+    
+    @keyframes twinkle {
+      0%, 100% { opacity: 0.3; }
+      50% { opacity: 1; }
+    }
+    
+    /* Golden Chakra */
+    .chakra-container {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: -1;
+      opacity: 0.15;
+    }
+    
+    .chakra {
+      width: 600px;
+      height: 600px;
+      position: relative;
+      animation: rotate 30s linear infinite;
+    }
+    
+    .chakra-circle {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      border-radius: 50%;
+      border: 3px solid rgba(255, 215, 0, 0.6);
+    }
+    
+    .chakra-circle:nth-child(1) {
+      width: 600px;
+      height: 600px;
+    }
+    
+    .chakra-circle:nth-child(2) {
+      width: 500px;
+      height: 500px;
+      animation: rotate 20s linear infinite reverse;
+    }
+    
+    .chakra-circle:nth-child(3) {
+      width: 400px;
+      height: 400px;
+    }
+    
+    .chakra-circle:nth-child(4) {
+      width: 300px;
+      height: 300px;
+      animation: rotate 15s linear infinite reverse;
+    }
+    
+    .chakra-circle:nth-child(5) {
+      width: 200px;
+      height: 200px;
+    }
+    
+    .chakra-circle:nth-child(6) {
+      width: 100px;
+      height: 100px;
+      background: radial-gradient(circle, rgba(255, 215, 0, 0.8) 0%, rgba(255, 215, 0, 0.2) 100%);
+      box-shadow: 0 0 50px rgba(255, 215, 0, 0.8);
+      animation: pulse 3s ease-in-out infinite;
+    }
+    
+    .chakra-petal {
+      position: absolute;
+      width: 150px;
+      height: 80px;
+      background: linear-gradient(45deg, rgba(255, 215, 0, 0.4), rgba(255, 223, 0, 0.6));
+      border-radius: 50% 50% 0 0;
+      transform-origin: bottom center;
+    }
+    
+    .chakra-petal:nth-child(7) { transform: translate(-50%, -100%) rotate(0deg); top: 50%; left: 50%; }
+    .chakra-petal:nth-child(8) { transform: translate(-50%, -100%) rotate(45deg); top: 50%; left: 50%; }
+    .chakra-petal:nth-child(9) { transform: translate(-50%, -100%) rotate(90deg); top: 50%; left: 50%; }
+    .chakra-petal:nth-child(10) { transform: translate(-50%, -100%) rotate(135deg); top: 50%; left: 50%; }
+    .chakra-petal:nth-child(11) { transform: translate(-50%, -100%) rotate(180deg); top: 50%; left: 50%; }
+    .chakra-petal:nth-child(12) { transform: translate(-50%, -100%) rotate(225deg); top: 50%; left: 50%; }
+    .chakra-petal:nth-child(13) { transform: translate(-50%, -100%) rotate(270deg); top: 50%; left: 50%; }
+    .chakra-petal:nth-child(14) { transform: translate(-50%, -100%) rotate(315deg); top: 50%; left: 50%; }
+    
+    @keyframes rotate {
+      from { transform: translate(-50%, -50%) rotate(0deg); }
+      to { transform: translate(-50%, -50%) rotate(360deg); }
+    }
+    
+    @keyframes pulse {
+      0%, 100% { transform: translate(-50%, -50%) scale(1); }
+      50% { transform: translate(-50%, -50%) scale(1.1); }
+    }
+    
+    /* Navigation */
+    nav {
+      background: rgba(10, 22, 40, 0.9);
+      backdrop-filter: blur(10px);
+      border-bottom: 2px solid rgba(255, 215, 0, 0.3);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    
+    .nav-link {
+      color: #fff;
+      text-decoration: none;
+      padding: 0.75rem 1.5rem;
+      display: inline-block;
+      transition: all 0.3s ease;
+      border-radius: 8px;
+      margin: 0 0.25rem;
+    }
+    
+    .nav-link:hover {
+      background: rgba(255, 215, 0, 0.2);
+      color: #FFD700;
+      transform: translateY(-2px);
+    }
+    
+    /* Content Cards */
+    .content-card {
+      background: rgba(15, 30, 55, 0.85);
+      backdrop-filter: blur(10px);
+      border-radius: 20px;
+      padding: 2.5rem;
+      margin-bottom: 2rem;
+      border: 2px solid rgba(255, 215, 0, 0.3);
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+      transition: all 0.4s ease;
+    }
+    
+    .content-card:hover {
+      transform: translateY(-10px);
+      border-color: rgba(255, 215, 0, 0.6);
+      box-shadow: 0 15px 60px rgba(255, 215, 0, 0.3);
+    }
+    
+    .section-title {
+      color: #FFD700;
+      font-size: 2.5rem;
+      font-weight: 700;
+      margin-bottom: 1.5rem;
+      text-align: center;
+      text-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+    }
+    
+    .feature-box {
+      background: rgba(20, 40, 70, 0.6);
+      padding: 1.5rem;
+      border-radius: 15px;
+      margin: 1rem 0;
+      border-left: 4px solid #FFD700;
+      transition: all 0.3s ease;
+    }
+    
+    .feature-box:hover {
+      background: rgba(30, 50, 80, 0.8);
+      transform: translateX(10px);
+      border-left-width: 6px;
+    }
+    
+    .icon-box {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 60px;
+      height: 60px;
+      background: linear-gradient(135deg, #FFD700, #FFA500);
+      border-radius: 50%;
+      margin-right: 1rem;
+      font-size: 1.5rem;
+      color: #0a1628;
+      box-shadow: 0 5px 20px rgba(255, 215, 0, 0.4);
+    }
+    
+    .step-number {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 50px;
+      height: 50px;
+      background: linear-gradient(135deg, #FFD700, #FFA500);
+      border-radius: 50%;
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: #0a1628;
+      margin-bottom: 1rem;
+    }
+    
+    .highlight-text {
+      color: #FFD700;
+      font-weight: 600;
+    }
+    
+    .btn-golden {
+      background: linear-gradient(135deg, #FFD700, #FFA500);
+      color: #0a1628;
+      padding: 1rem 2.5rem;
+      border-radius: 50px;
+      text-decoration: none;
+      font-weight: 600;
+      display: inline-block;
+      transition: all 0.3s ease;
+      box-shadow: 0 5px 20px rgba(255, 215, 0, 0.4);
+      border: none;
+      cursor: pointer;
+      font-size: 1.1rem;
+    }
+    
+    .btn-golden:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 30px rgba(255, 215, 0, 0.6);
+      background: linear-gradient(135deg, #FFA500, #FFD700);
+    }
+    
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 2rem;
+      margin: 2rem 0;
+    }
+    
+    /* Floating Animation */
+    @keyframes float {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-20px); }
+    }
+    
+    .float-animation {
+      animation: float 3s ease-in-out infinite;
+    }
+    
+    /* Scroll animations */
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    .fade-in-up {
+      animation: fadeInUp 0.8s ease-out;
+    }
+  </style>
+</head>
+<body>
+  <!-- Universe Background -->
+  <div class="universe-bg">
+    <div class="stars" id="stars"></div>
+  </div>
+  
+  <!-- Golden Chakra -->
+  <div class="chakra-container">
+    <div class="chakra">
+      <div class="chakra-circle"></div>
+      <div class="chakra-circle"></div>
+      <div class="chakra-circle"></div>
+      <div class="chakra-circle"></div>
+      <div class="chakra-circle"></div>
+      <div class="chakra-circle"></div>
+      <div class="chakra-petal"></div>
+      <div class="chakra-petal"></div>
+      <div class="chakra-petal"></div>
+      <div class="chakra-petal"></div>
+      <div class="chakra-petal"></div>
+      <div class="chakra-petal"></div>
+      <div class="chakra-petal"></div>
+      <div class="chakra-petal"></div>
+    </div>
+  </div>
+
+  <!-- Navigation -->
+  <nav>
+    <div class="container mx-auto px-6 py-4">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center space-x-2">
+          <i class="fas fa-brain text-3xl" style="color: #FFD700;"></i>
+          <span class="text-2xl font-bold" style="color: #FFD700;">StudentPredictor</span>
+        </div>
+        <div class="flex space-x-2">
+          <a href="index.html" class="nav-link"><i class="fas fa-home mr-2"></i>Home</a>
+          <a href="about.html" class="nav-link" style="background: rgba(255, 215, 0, 0.2); color: #FFD700;"><i class="fas fa-info-circle mr-2"></i>About Us</a>
+          <a href="attendance.html" class="nav-link"><i class="fas fa-clipboard-list mr-2"></i>Inputs</a>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <div class="container mx-auto px-6 py-12">
+    <!-- Hero Section -->
+    <div class="content-card fade-in-up text-center" style="margin-bottom: 3rem;">
+      <div class="flex justify-center mb-6">
+        <div class="icon-box float-animation" style="width: 100px; height: 100px; font-size: 3rem;">
+          <i class="fas fa-graduation-cap"></i>
+        </div>
+      </div>
+      <h1 class="section-title" style="font-size: 3.5rem; margin-bottom: 1rem;">About Student Performance Predictor</h1>
+      <p class="text-xl text-gray-300" style="max-width: 800px; margin: 0 auto; line-height: 1.8;">
+        Empowering students to unlock their full academic potential through intelligent performance analysis and personalized insights
+      </p>
+    </div>
+
+    <!-- What We Do -->
+    <div class="content-card fade-in-up">
+      <h2 class="section-title"><i class="fas fa-lightbulb mr-3"></i>What We Do</h2>
+      <p class="text-lg leading-relaxed mb-6 text-gray-200">
+        Welcome to <span class="highlight-text">Student Performance Predictor</span>, your personal academic companion designed to help you understand yourself better as a learner. We believe that every student has unique strengths and areas for growth, but identifying them isn't always easy. That's where we come in.
+      </p>
+      <p class="text-lg leading-relaxed text-gray-200">
+        Our platform uses a comprehensive, multi-dimensional approach to analyze your academic performance. We don't just look at grades—we examine <span class="highlight-text">how you attend classes, how you perform in tests and assignments, what extracurricular events you engage with, and how you think critically</span> through problem-solving challenges. By combining all these factors, we create a complete picture of your academic journey.
+      </p>
+    </div>
+
+    <!-- How It Works -->
+    <div class="content-card fade-in-up">
+      <h2 class="section-title"><i class="fas fa-cogs mr-3"></i>How Our System Works</h2>
+      <p class="text-lg leading-relaxed mb-8 text-gray-200">
+        Our intelligent prediction system analyzes five key dimensions of your academic life to provide you with actionable insights:
+      </p>
+      
+      <div class="grid-2">
+        <div class="feature-box">
+          <div class="flex items-start">
+            <div class="icon-box">
+              <i class="fas fa-calendar-check"></i>
+            </div>
+            <div>
+              <h3 class="text-2xl font-semibold mb-3" style="color: #FFD700;">1. Attendance Tracking</h3>
+              <p class="text-gray-300 leading-relaxed">
+                You input your <span class="highlight-text">attendance percentage (0-100%)</span>. Consistency in attendance is often the foundation of academic success. Regular class participation means you're exposed to lectures, discussions, and in-class activities that build your understanding. We analyze your attendance patterns to understand your commitment level and identify if irregular attendance might be affecting your performance.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div class="feature-box">
+          <div class="flex items-start">
+            <div class="icon-box">
+              <i class="fas fa-file-alt"></i>
+            </div>
+            <div>
+              <h3 class="text-2xl font-semibold mb-3" style="color: #FFD700;">2. Test Performance Analysis</h3>
+              <p class="text-gray-300 leading-relaxed">
+                Share your test scores by entering <span class="highlight-text">maximum marks and marks obtained</span>. Tests measure your ability to recall information, apply concepts, and perform under time pressure. By analyzing your test performance across different subjects or topics, we identify patterns—are you consistently scoring high, or do certain areas need more focus? This helps us understand your strengths in exam situations.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div class="feature-box">
+          <div class="flex items-start">
+            <div class="icon-box">
+              <i class="fas fa-tasks"></i>
+            </div>
+            <div>
+              <h3 class="text-2xl font-semibold mb-3" style="color: #FFD700;">3. Assignment Evaluation</h3>
+              <p class="text-gray-300 leading-relaxed">
+                Input your assignment scores with <span class="highlight-text">maximum and obtained marks</span>. Assignments reflect your ability to research, organize thoughts, and present information clearly. Unlike tests, assignments give you time to think deeply and demonstrate creativity. We assess how well you're managing long-term tasks, which is crucial for developing discipline and time management skills.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div class="feature-box">
+          <div class="flex items-start">
+            <div class="icon-box">
+              <i class="fas fa-users"></i>
+            </div>
+            <div>
+              <h3 class="text-2xl font-semibold mb-3" style="color: #FFD700;">4. Event Participation & Learning</h3>
+              <p class="text-gray-300 leading-relaxed">
+                Describe events you've attended in <span class="highlight-text">up to 200 words</span>—workshops, seminars, competitions, or cultural activities. Learning happens outside the classroom too! By understanding what events you participate in and what you learned from them, we gauge your <span class="highlight-text">curiosity, social engagement, and willingness to explore beyond textbooks</span>. This dimension reveals your holistic development as a student.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div class="feature-box">
+          <div class="flex items-start">
+            <div class="icon-box">
+              <i class="fas fa-puzzle-piece"></i>
+            </div>
+            <div>
+              <h3 class="text-2xl font-semibold mb-3" style="color: #FFD700;">5. Logical Problem-Solving Assessment</h3>
+              <p class="text-gray-300 leading-relaxed">
+                Answer <span class="highlight-text">10 carefully designed logical reasoning questions</span>. These questions test your critical thinking, analytical skills, and ability to approach problems systematically. Strong problem-solving skills are essential not just for academics but for real-world challenges. Your responses help us understand how you think, reason, and make decisions under different scenarios.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- What You Get -->
+    <div class="content-card fade-in-up">
+      <h2 class="section-title"><i class="fas fa-gift mr-3"></i>What You Get From Us</h2>
+      <p class="text-lg leading-relaxed mb-6 text-gray-200">
+        After you complete all the inputs, our intelligent system processes your data and generates a comprehensive performance report that includes:
+      </p>
+      
+      <div class="grid-2">
+        <div class="feature-box">
+          <div class="flex items-start">
+            <span class="step-number">1</span>
+            <div class="ml-4">
+              <h3 class="text-xl font-semibold mb-2" style="color: #FFD700;">Your Strengths (Pros)</h3>
+              <p class="text-gray-300">
+                We highlight what you're doing exceptionally well—whether it's consistent attendance, excellent test scores, creative assignments, active event participation, or sharp logical thinking. Understanding your strengths builds confidence and shows you where you naturally excel.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div class="feature-box">
+          <div class="flex items-start">
+            <span class="step-number">2</span>
+            <div class="ml-4">
+              <h3 class="text-xl font-semibold mb-2" style="color: #FFD700;">Areas for Improvement (Cons)</h3>
+              <p class="text-gray-300">
+                We identify specific areas where you can improve. Maybe your attendance needs consistency, or your test performance could benefit from better preparation strategies. Perhaps you need to engage more in events or strengthen your problem-solving approach. This isn't about criticism—it's about growth.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div class="feature-box">
+          <div class="flex items-start">
+            <span class="step-number">3</span>
+            <div class="ml-4">
+              <h3 class="text-xl font-semibold mb-2" style="color: #FFD700;">Personalized Tips & Strategies</h3>
+              <p class="text-gray-300">
+                Most importantly, we don't just tell you what's wrong—we tell you <span class="highlight-text">how to fix it</span>. You'll receive practical, actionable advice tailored to your specific situation. From study techniques and time management strategies to ways to enhance critical thinking, we guide you toward making meaningful improvements.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div class="feature-box">
+          <div class="flex items-start">
+            <span class="step-number">4</span>
+            <div class="ml-4">
+              <h3 class="text-xl font-semibold mb-2" style="color: #FFD700;">Performance Visualization</h3>
+              <p class="text-gray-300">
+                Visual charts and graphs that make it easy to understand your performance trends across different dimensions. See at a glance where you stand and track your progress over time.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Why Use Our Platform -->
+    <div class="content-card fade-in-up">
+      <h2 class="section-title"><i class="fas fa-star mr-3"></i>Why Choose Our Platform?</h2>
+      <div class="grid-2">
+        <div class="feature-box">
+          <h3 class="text-xl font-semibold mb-3 flex items-center">
+            <i class="fas fa-user-check mr-3" style="color: #FFD700; font-size: 1.5rem;"></i>
+            Know Yourself Better
+          </h3>
+          <p class="text-gray-300">
+            Self-awareness is the first step toward improvement. Our comprehensive analysis helps you understand your learning style, habits, and patterns in ways you might not have noticed before.
+          </p>
+        </div>
+
+        <div class="feature-box">
+          <h3 class="text-xl font-semibold mb-3 flex items-center">
+            <i class="fas fa-bullseye mr-3" style="color: #FFD700; font-size: 1.5rem;"></i>
+            Focused Efforts
+          </h3>
+          <p class="text-gray-300">
+            Stop wasting time on generic study advice. Our personalized recommendations help you direct your energy exactly where it's needed most, making your efforts more efficient and effective.
+          </p>
+        </div>
+
+        <div class="feature-box">
+          <h3 class="text-xl font-semibold mb-3 flex items-center">
+            <i class="fas fa-chart-line mr-3" style="color: #FFD700; font-size: 1.5rem;"></i>
+            Boost Academic Productivity
+          </h3>
+          <p class="text-gray-300">
+            By addressing your specific weaknesses and building on your strengths, you'll see measurable improvements in your grades, understanding, and overall academic performance.
+          </p>
+        </div>
+
+        <div class="feature-box">
+          <h3 class="text-xl font-semibold mb-3 flex items-center">
+            <i class="fas fa-brain mr-3" style="color: #FFD700; font-size: 1.5rem;"></i>
+            Develop Holistically
+          </h3>
+          <p class="text-gray-300">
+            We don't just focus on grades—we help you develop critical thinking, time management, discipline, and engagement skills that will benefit you throughout your academic career and beyond.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- How to Use -->
+    <div class="content-card fade-in-up">
+      <h2 class="section-title"><i class="fas fa-question-circle mr-3"></i>How to Use Our Platform</h2>
+      <p class="text-lg leading-relaxed mb-8 text-gray-200">
+        Getting started is simple and intuitive. Follow these easy steps to receive your personalized performance analysis:
+      </p>
+      
+      <div class="space-y-4">
+        <div class="feature-box">
+          <div class="flex items-start">
+            <span class="step-number">1</span>
+            <div class="ml-4 flex-1">
+              <h3 class="text-2xl font-semibold mb-3" style="color: #FFD700;">Create Your Account & Log In</h3>
+              <p class="text-gray-300 text-lg leading-relaxed">
+                Start by creating your unique account. Choose a <span class="highlight-text">memorable name as your unique ID</span> and set a <span class="highlight-text">secure password</span>. This ensures your data remains private and accessible only to you. Once registered, log in to access your personal dashboard.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div class="feature-box">
+          <div class="flex items-start">
+            <span class="step-number">2</span>
+            <div class="ml-4 flex-1">
+              <h3 class="text-2xl font-semibold mb-3" style="color: #FFD700;">Navigate to Input Sections</h3>
+              <p class="text-gray-300 text-lg leading-relaxed">
+                From your dashboard, you'll see clearly labeled sections for each type of input. Navigate through <span class="highlight-text">Attendance, Test Scores, Assignments, Events, and Problem-Solving Questions</span>. Take your time—you don't have to complete everything in one session. Your progress is saved automatically.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div class="feature-box">
+          <div class="flex items-start">
+            <span class="step-number">3</span>
+            <div class="ml-4 flex-1">
+              <h3 class="text-2xl font-semibold mb-3" style="color: #FFD700;">Provide Accurate Information</h3>
+              <p class="text-gray-300 text-lg leading-relaxed">
+                Fill in each section honestly and accurately. The quality of your insights depends on the quality of your inputs. Don't worry about being perfect—we're here to help you improve, not judge you. Use your best knowledge and be as detailed as possible, especially in describing events and answering logical questions.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div class="feature-box">
+          <div class="flex items-start">
+            <span class="step-number">4</span>
+            <div class="ml-4 flex-1">
+              <h3 class="text-2xl font-semibold mb-3" style="color: #FFD700;">Submit & Wait for Analysis</h3>
+              <p class="text-gray-300 text-lg leading-relaxed">
+                Once you've completed all sections, submit your information. Our intelligent system will analyze your data, compare it against successful academic patterns, and generate your personalized report. This usually takes just a few moments.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div class="feature-box">
+          <div class="flex items-start">
+            <span class="step-number">5</span>
+            <div class="ml-4 flex-1">
+              <h3 class="text-2xl font-semibold mb-3" style="color: #FFD700;">Review Your Results</h3>
+              <p class="text-gray-300 text-lg leading-relaxed">
+                Your comprehensive report will display your <span class="highlight-text">strengths, areas for improvement, and personalized recommendations</span>. Read through it carefully, take notes, and reflect on the insights provided. Download your report for future reference.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div class="feature-box">
+          <div class="flex items-start">
+            <span class="step-number">6</span>
+            <div class="ml-4 flex-1">
+              <h3 class="text-2xl font-semibold mb-3" style="color: #FFD700;">Provide Feedback & Download Results</h3>
+              <p class="text-gray-300 text-lg leading-relaxed">
+                We value your opinion! Share your feedback about the platform and your results. This helps us continuously improve. You can also <span class="highlight-text">download your complete analysis as a PDF</span> to keep track of your progress or share with mentors, parents, or teachers.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Mission Statement -->
+    <div class="content-card fade-in-up text-center">
+      <h2 class="section-title"><i class="fas fa-heart mr-3"></i>Our Mission</h2>
+      <p class="text-xl leading-relaxed text-gray-200" style="max-width: 900px; margin: 0 auto;">
+        We believe that <span class="highlight-text">every student has the potential to excel</span> when given the right guidance and insights. Our mission is to empower you with self-knowledge, help you make informed decisions about your academic journey, and guide you toward achieving your full potential. Success isn't just about grades—it's about understanding yourself, developing good habits, and continuously improving. We're here to support you every step of the way.
+      </p>
+      <div class="mt-10">
+        <a href="index.html" class="btn-golden">
+          <i class="fas fa-rocket mr-2"></i>Start Your Journey Now
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer style="background: rgba(10, 22, 40, 0.9); border-top: 2px solid rgba(255, 215, 0, 0.3); padding: 2rem 0; margin-top: 4rem;">
+    <div class="container mx-auto px-6 text-center">
+      <p class="text-gray-400">
+        © 2024 Student Performance Predictor. Empowering students to reach their full potential.
+      </p>
+      <div class="mt-4 space-x-6">
+        <a href="#" class="text-gray-400 hover:text-yellow-400 transition"><i class="fab fa-facebook fa-lg"></i></a>
+        <a href="#" class="text-gray-400 hover:text-yellow-400 transition"><i class="fab fa-twitter fa-lg"></i></a>
+        <a href="#" class="text-gray-400 hover:text-yellow-400 transition"><i class="fab fa-linkedin fa-lg"></i></a>
+        <a href="#" class="text-gray-400 hover:text-yellow-400 transition"><i class="fab fa-instagram fa-lg"></i></a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Generate stars
+    const starsContainer = document.getElementById('stars');
+    for (let i = 0; i < 200; i++) {
+      const star = document.createElement('div');
+      star.className = 'star';
+      star.style.left = Math.random() * 100 + '%';
+      star.style.top = Math.random() * 100 + '%';
+      star.style.animationDelay = Math.random() * 3 + 's';
+      starsContainer.appendChild(star);
+    }
+
+    // Scroll animation
+    const observerOptions = {
+      threshold: 0.1,
+      rootMargin: '0px 0px -100px 0px'
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('fade-in-up');
+        }
+      });
+    }, observerOptions);
+
+    document.querySelectorAll('.content-card').forEach(card => {
+      observer.observe(card);
+    });
+  </script>
+</body>
+</html>

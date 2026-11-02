@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EduVista - Logical Quiz</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      background-color: #f5f7fa;
+      color: #333;
+      line-height: 1.6;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 30px 20px;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    .header h1 {
+      font-size: 2.5rem;
+      font-weight: bold;
+      background: linear-gradient(135deg, #0a1628 0%, #1a73e8 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 15px;
+    }
+
+    .header p {
+      color: #555;
+      font-size: 1.1rem;
+    }
+
+    .quiz-container {
+      background: white;
+      border-radius: 15px;
+      padding: 30px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    }
+
+    .question {
+      margin-bottom: 30px;
+      padding: 20px;
+      border-radius: 10px;
+      background: #f9f9f9;
+      border-left: 4px solid #FFD700;
+    }
+
+    .question h3 {
+      margin-bottom: 15px;
+      color: #0a1628;
+    }
+
+    .options {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .option {
+      display: flex;
+      align-items: center;
+      padding: 12px 15px;
+      background: white;
+      border: 2px solid #e0e0e0;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .option:hover {
+      border-color: #FFD700;
+      background: #FFF9E6;
+    }
+
+    .option input[type="radio"] {
+      margin-right: 12px;
+      accent-color: #FFD700;
+    }
+
+    .submit-btn {
+      background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+      color: #0a1628;
+      border: none;
+      padding: 15px 40px;
+      border-radius: 25px;
+      cursor: pointer;
+      font-weight: 700;
+      font-size: 1.1rem;
+      transition: all 0.3s ease;
+      display: block;
+      margin: 30px auto 0;
+      box-shadow: 0 6px 20px rgba(255, 215, 0, 0.4);
+    }
+
+    .submit-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 25px rgba(255, 215, 0, 0.6);
+    }
+
+    .submit-btn:disabled {
+      background: #ccc;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+
+    .result-container {
+      text-align: center;
+      padding: 30px;
+      display: none;
+    }
+
+    .result-container h2 {
+      color: #0a1628;
+      margin-bottom: 20px;
+    }
+
+    .score {
+      font-size: 2.5rem;
+      font-weight: bold;
+      color: #1a73e8;
+      margin: 20px 0;
+    }
+
+    .progress-bar {
+      height: 10px;
+      background: #e0e0e0;
+      border-radius: 5px;
+      margin: 20px 0;
+      overflow: hidden;
+    }
+
+    .progress {
+      height: 100%;
+      background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+      width: 0%;
+      transition: width 0.5s ease;
+    }
+
+    .feedback {
+      margin-top: 20px;
+      padding: 15px;
+      border-radius: 8px;
+      font-weight: 500;
+    }
+
+    .success {
+      background: #E8F5E9;
+      color: #2E7D32;
+      border-left: 4px solid #4CAF50;
+    }
+
+    .error {
+      background: #FFEBEE;
+      color: #C62828;
+      border-left: 4px solid #F44336;
+    }
+
+    @media (max-width: 768px) {
+      .container {
+        padding: 20px 15px;
+      }
+      
+      .header h1 {
+        font-size: 2rem;
+      }
+      
+      .quiz-container {
+        padding: 20px 15px;
+      }
+      
+      .question {
+        padding: 15px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>Logical Reasoning Quiz</h1>
+      <p>Test your logical thinking skills with these 5 questions</p>
+    </div>
+
+    <div class="quiz-container">
+      <form id="quizForm">
+        <!-- Questions will be inserted here by JavaScript -->
+      </form>
+    </div>
+
+    <div class="result-container" id="resultContainer">
+      <h2>Quiz Results</h2>
+      <div class="progress-bar">
+        <div class="progress" id="progressBar"></div>
+      </div>
+      <div class="score" id="scoreDisplay">0/5</div>
+      <div class="feedback" id="feedback"></div>
+      <button id="retryBtn" class="submit-btn" style="margin-top: 30px;"><i class="fas fa-redo"></i> Try Again</button>
+    </div>
+  </div>
+
+  <!-- Firebase SDK -->
+  <script type="module">
+    // Import the functions you need from the SDKs you need
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { 
+      getAuth, 
+      onAuthStateChanged 
+    } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+    import { 
+      getFirestore, 
+      collection, 
+      addDoc,
+      getDoc,
+      doc,
+      serverTimestamp 
+    } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+    // Your web app's Firebase configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyAvC2UrHIrOjRQrvJm1YSMFoz24N3c0RD0",
+      authDomain: "eduvista-1d822.firebaseapp.com",
+      projectId: "eduvista-1d822",
+      storageBucket: "eduvista-1d822.firebasestorage.app",
+      messagingSenderId: "902087761435",
+      appId: "1:902087761435:web:e24671b72153e3b27c62be",
+      measurementId: "G-MT39PVBZH9"
+    };
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    // Quiz data
+    const quizData = [
+      {
+        question: "If all Bloops are Razzies and all Razzies are Lazzies, then all Bloops are definitely Lazzies?",
+        options: ["True", "False", "Cannot be determined", "None of the above"],
+        correct: 0,
+        explanation: "This follows the logical rule of the transitive property: If A = B and B = C, then A = C."
+      },
+      {
+        question: "Which number should come next in the series? 1, 1, 2, 3, 5, 8, 13, ...",
+        options: ["18", "21", "23", "26"],
+        correct: 1,
+        explanation: "This is the Fibonacci sequence where each number is the sum of the two preceding ones."
+      },
+      {
+        question: "If some Smaugs are Thors and some Thors are Thrains, then some Smaugs are definitely Thrains.",
+        options: ["True", "False", "Cannot be determined", "None of the above"],
+        correct: 2,
+        explanation: "This is an example of the 'some' quantifier which doesn't guarantee that the two groups overlap."
+      },
+      {
+        question: "A train leaves station A at 60 mph. Two hours later, another train leaves station A at 80 mph. How long until the second train catches up?",
+        options: ["3 hours", "4 hours", "5 hours", "6 hours"],
+        correct: 3,
+        explanation: "The first train has a 120-mile head start. The second train gains 20 mph (80-60). 120 miles / 20 mph = 6 hours."
+      },
+      {
+        question: "If all Zips are Zaps and no Zaps are Zops, then no Zips are Zops.",
+        options: ["True", "False", "Cannot be determined", "None of the above"],
+        correct: 0,
+        explanation: "This follows the logical rule: If A ⊂ B and B ∩ C = ∅, then A ∩ C = ∅."
+      }
+    ];
+
+    // DOM Elements
+    const quizForm = document.getElementById('quizForm');
+    const submitBtn = document.getElementById('submitBtn');
+    const resultContainer = document.getElementById('resultContainer');
+    const scoreDisplay = document.getElementById('scoreDisplay');
+    const progressBar = document.getElementById('progressBar');
+    const feedbackEl = document.getElementById('feedback');
+    const retryBtn = document.getElementById('retryBtn');
+
+    // Initialize quiz
+    function initQuiz() {
+      quizForm.innerHTML = '';
+      
+      quizData.forEach((question, index) => {
+        const questionDiv = document.createElement('div');
+        questionDiv.className = 'question';
+        questionDiv.innerHTML = `
+          <h3>Question ${index + 1}: ${question.question}</h3>
+          <div class="options">
+            ${question.options.map((option, i) => `
+              <label class="option">
+                <input type="radio" name="q${index}" value="${i}" required>
+                ${option}
+              </label>
+            `).join('')}
+          </div>
+        `;
+        quizForm.appendChild(questionDiv);
+      });
+
+      // Enable submit button when all questions are answered
+      const radioInputs = quizForm.querySelectorAll('input[type="radio"]');
+      radioInputs.forEach(input => {
+        input.addEventListener('change', () => {
+          const allAnswered = quizData.every((_, i) => 
+            quizForm.querySelector(`input[name="q${i}"]:checked`)
+          );
+          submitBtn.disabled = !allAnswered;
+        });
+      });
+
+      // Add the submit button at the end
+      const submitBtn = document.createElement('button');
+      submitBtn.id = 'submitBtn';
+      submitBtn.className = 'submit-btn';
+      submitBtn.textContent = 'Submit Quiz';
+      submitBtn.disabled = true;
+      quizForm.appendChild(submitBtn);
+
+      // Re-add event listener
+      submitBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        const { score, results } = calculateScore();
+        showResults(score, results);
+      });
+    }
+
+    // Calculate score
+    function calculateScore() {
+      let score = 0;
+      const results = [];
+      
+      quizData.forEach((question, index) => {
+        const selected = quizForm.querySelector(`input[name="q${index}"]:checked`);
+        if (selected) {
+          const isCorrect = parseInt(selected.value) === question.correct;
+          if (isCorrect) score++;
+          results.push({
+            question: question.question,
+            selected: question.options[parseInt(selected.value)],
+            correct: question.options[question.correct],
+            isCorrect,
+            explanation: question.explanation
+          });
+        }
+      });
+      
+      return { score, results };
+    }
+
+    // Show results
+    function showResults(score, results) {
+      const percentage = (score / quizData.length) * 100;
+      
+      // Update UI
+      scoreDisplay.textContent = `${score}/${quizData.length}`;
+      progressBar.style.width = `${percentage}%`;
+      
+      // Generate feedback
+      let feedback = '<h3>Question Breakdown:</h3>';
+      results.forEach((result, index) => {
+        feedback += `
+          <div class="feedback ${result.isCorrect ? 'success' : 'error'}">
+            <p><strong>Q${index + 1}:</strong> ${result.question}</p>
+            <p>Your answer: ${result.selected}</p>
+            ${!result.isCorrect ? `<p>Correct answer: ${result.correct}</p>` : ''}
+            <p><em>${result.explanation}</em></p>
+          </div>
+        `;
+      });
+      
+      feedbackEl.innerHTML = feedback;
+      quizForm.style.display = 'none';
+      resultContainer.style.display = 'block';
+      // No need to hide submitBtn, it's already hidden by hiding quizForm.
+      
+      // Save results to Firebase
+      saveResults(score, percentage, results);
+    }
+
+    // Save results to Firebase
+    async function saveResults(score, percentage, results) {
+      try {
+        console.log('Starting to save quiz results...');
+        const user = auth.currentUser;
+        console.log('Current user:', user);
+        
+        if (!user) {
+          console.error('User not logged in, results not saved');
+          return;
+        }
+        
+        const quizResults = {
+          userId: user.uid,
+          email: user.email || 'unknown',
+          score,
+          totalQuestions: quizData.length,
+          percentage,
+          timestamp: serverTimestamp(),
+          results,
+          testName: 'Logical Reasoning Quiz'
+        };
+        
+        console.log('Attempting to save:', JSON.stringify(quizResults, null, 2));
+        
+        // Add a test document first
+        try {
+          console.log('Testing Firestore connection...');
+          const testRef = await addDoc(collection(db, 'testConnection'), {
+            test: 'connection test',
+            timestamp: serverTimestamp()
+          });
+          console.log('Test document written with ID: ', testRef.id);
+        } catch (testError) {
+          console.error('Test document error:', testError);
+        }
+        
+        // Save the actual results
+        const docRef = await addDoc(collection(db, `users/${user.uid}/quizResults`), quizResults);
+        console.log('Quiz results saved successfully with ID: ', docRef.id);
+
+        // After saving, redirect to the assignments page
+        setTimeout(() => {
+          window.location.href = 'assignments.html';
+        }, 1500);
+        
+        // Verify the document was saved
+        console.log('Verifying document was saved...');
+        const docSnapshot = await getDoc(doc(db, 'quizResults', docRef.id));
+        if (docSnapshot.exists()) {
+          console.log('Document verified:', docSnapshot.id, docSnapshot.data());
+        } else {
+          console.error('Failed to verify document was saved');
+        }
+        
+      } catch (error) {
+        console.error('Error saving quiz results:', error);
+        console.error('Error details:', {
+          name: error.name,
+          message: error.message,
+          code: error.code,
+          stack: error.stack
+        });
+        
+        // Try to save to localStorage as fallback
+        try {
+          const fallbackData = {
+            ...quizResults,
+            timestamp: new Date().toISOString(),
+            saveError: error.message
+          };
+          localStorage.setItem(`quizResults_${Date.now()}`, JSON.stringify(fallbackData));
+          console.log('Saved to localStorage as fallback');
+        } catch (fallbackError) {
+          console.error('Failed to save to localStorage:', fallbackError);
+        }
+      }
+    }
+
+    // Event Listeners
+    retryBtn.addEventListener('click', () => {
+      resultContainer.style.display = 'none';
+      quizForm.style.display = 'block';
+      submitBtn.disabled = true;
+      initQuiz();
+    });
+
+    // Check auth state and initialize quiz
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        initQuiz();
+      } else {
+        // Redirect to login if not authenticated
+        window.location.href = 'login.html';
+      }
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,914 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
+  <title>Student Performance - EduVista</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
+    }
+    body {
+      background: #0a1628;
+      overflow-x: hidden;
+      min-height: 100vh;
+      color: #e2e8f0;
+    }
+    /* Universe Background */
+    .universe-bg {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      background: radial-gradient(ellipse at bottom, #1b2735 0%, #090a0f 100%);
+      overflow: hidden;
+    }
+    .stars {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      background: transparent;
+    }
+    .star {
+      position: absolute;
+      background: white;
+      border-radius: 50%;
+      animation: twinkle 3s infinite;
+    }
+    @keyframes twinkle {
+      0%, 100% { opacity: 0.3; }
+      50% { opacity: 1; }
+    }
+    /* Golden Chakra */
+    .chakra-container {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 1;
+      opacity: 0.1;
+      pointer-events: none;
+    }
+    .chakra {
+      width: 600px;
+      height: 600px;
+      position: relative;
+      animation: rotateChakra 30s linear infinite;
+    }
+    @keyframes rotateChakra {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+    .chakra-circle {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      border: 2px solid rgba(255, 215, 0, 0.5);
+      border-radius: 50%;
+    }
+    .chakra-circle:nth-child(1) { width: 100%; height: 100%; }
+    .chakra-circle:nth-child(2) { width: 80%; height: 80%; }
+    .chakra-circle:nth-child(3) { width: 60%; height: 60%; }
+    /* Content */
+    .content-wrapper {
+      position: relative;
+      z-index: 10;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+    .card {
+      background: rgba(17, 24, 39, 0.7);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 215, 0, 0.2);
+      border-radius: 1rem;
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    .gradient-text {
+      background: linear-gradient(135deg, #FFD700, #FFA500);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      color: transparent;
+    }
+    .btn {
+      background: linear-gradient(135deg, #FFD700, #FFA500);
+      color: #0f172a;
+      border: none;
+      padding: 0.75rem 1.5rem;
+      border-radius: 0.5rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-decoration: none;
+      display: inline-block;
+    }
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 15px rgba(255, 215, 0, 0.3);
+    }
+    .stat-card {
+      background: rgba(31, 41, 55, 0.6);
+      border-left: 4px solid #FFD700;
+      padding: 1.5rem;
+      border-radius: 0.5rem;
+      transition: all 0.3s ease;
+    }
+    .stat-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+    }
+  </style>
+</head>
+<body>
+  <!-- Universe Background -->
+  <div class="universe-bg">
+    <div class="stars" id="stars"></div>
+  </div>
+
+  <!-- Chakra Animation -->
+  <div class="chakra-container">
+    <div class="chakra">
+      <div class="chakra-circle"></div>
+      <div class="chakra-circle"></div>
+      <div class="chakra-circle"></div>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <div class="content-wrapper">
+    <header class="text-center py-8">
+      <h1 class="text-4xl font-bold mb-2 gradient-text">Your Performance Dashboard</h1>
+      <p class="text-gray-400">Track your academic progress and performance</p>
+    </header>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+      <!-- Overall Performance -->
+      <div class="card">
+        <h2 class="text-xl font-semibold mb-4 flex items-center">
+          <i class="fas fa-trophy mr-2 text-yellow-400"></i>
+          Overall Performance
+        </h2>
+        <div class="text-center py-4">
+          <div class="text-5xl font-bold gradient-text mb-2" id="overallScore">--</div>
+          <div class="text-gray-400" id="performanceStatus">Overall average of attendance, tests, and assignments</div>
+
+          <div class="h-2 bg-gray-700 rounded-full mt-4 overflow-hidden">
+            <div id="performanceBar" class="h-full bg-gradient-to-r from-yellow-400 to-amber-500" style="width: 0%"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Attendance -->
+      <div class="card">
+        <h2 class="text-xl font-semibold mb-4 flex items-center">
+          <i class="fas fa-calendar-check mr-2 text-green-400"></i>
+          Attendance
+        </h2>
+        <div class="text-center py-4">
+          <div class="text-5xl font-bold text-green-400 mb-2" id="attendanceScore">--%</div>
+          <div class="text-gray-400">Your overall attendance percentage</div>
+
+          <div class="h-2 bg-gray-700 rounded-full mt-4 overflow-hidden">
+            <div id="attendanceBar" class="h-full bg-gradient-to-r from-green-400 to-emerald-500" style="width: 0%"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Test Scores -->
+      <div class="card">
+        <h2 class="text-xl font-semibold mb-4 flex items-center">
+          <i class="fas fa-graduation-cap mr-2 text-blue-400"></i>
+          Test Scores
+        </h2>
+        <div class="text-center py-4">
+          <div class="text-5xl font-bold text-blue-400 mb-2" id="testScore">--%</div>
+          <div class="text-gray-400">Average of all your saved test scores</div>
+
+          <div class="h-2 bg-gray-700 rounded-full mt-4 overflow-hidden">
+            <div id="testScoreBar" class="h-full bg-gradient-to-r from-blue-400 to-indigo-500" style="width: 0%"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Detailed Stats -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+      <!-- Assignments -->
+      <div class="card">
+        <h2 class="text-xl font-semibold mb-4 flex items-center">
+          <i class="fas fa-tasks mr-2 text-purple-400"></i>
+          Assignments
+        </h2>
+        <div id="assignmentStats" class="space-y-4">
+          <!-- Will be populated by JavaScript -->
+          <div class="text-center py-8">
+            <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-yellow-400 mx-auto"></div>
+            <p class="mt-2 text-gray-400">Loading assignments...</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Performance Chart -->
+      <div class="card">
+        <h2 class="text-xl font-semibold mb-4 flex items-center">
+          <i class="fas fa-chart-line mr-2 text-amber-400"></i>
+          Performance Trend
+        </h2>
+        <div class="h-64">
+          <canvas id="performanceChart"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <!-- Breakdown Chart -->
+    <div class="card mb-8">
+      <h2 class="text-xl font-semibold mb-4 flex items-center">
+        <i class="fas fa-chart-bar mr-2 text-blue-400"></i>
+        Score Breakdown
+      </h2>
+      <p class="text-sm text-gray-400 mb-2">Comparison of your Attendance, Test, Assignment, Events, Problem Solving, and Overall scores.</p>
+      <p class="text-xs text-gray-400 mb-4" id="quizScoreDisplay">Problem Solving Quiz: --%</p>
+      <div class="h-64">
+        <canvas id="breakdownChart"></canvas>
+      </div>
+    </div>
+
+    <!-- Strengths & Weaknesses -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+      <div class="card">
+        <h2 class="text-xl font-semibold mb-4 flex items-center">
+          <i class="fas fa-arrow-up mr-2 text-green-400"></i>
+          Strengths
+        </h2>
+        <div id="strengthsList" class="space-y-2 text-sm text-gray-300">
+          <p class="text-gray-500">Your strongest areas will appear here based on your scores.</p>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2 class="text-xl font-semibold mb-4 flex items-center">
+          <i class="fas fa-arrow-down mr-2 text-red-400"></i>
+          Weaknesses
+        </h2>
+        <div id="weaknessesList" class="space-y-2 text-sm text-gray-300">
+          <p class="text-gray-500">Areas that need more work will appear here based on your scores.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="flex flex-col sm:flex-row justify-center gap-4 mt-8">
+      <a href="index.html" class="btn">
+        <i class="fas fa-home mr-2"></i> Back to Home
+      </a>
+      <button id="downloadReportButton" class="btn bg-gray-700 hover:bg-gray-600">
+        <i class="fas fa-download mr-2"></i> Download Report
+      </button>
+    </div>
+  </div>
+
+  <!-- Simple Download Report Script -->
+  <script>
+    // Simple download report function
+    document.getElementById('downloadReportButton').addEventListener('click', function() {
+      // Get data from the page
+      const overallScore = document.getElementById('overallScore')?.textContent || '--';
+      const attendanceScore = document.getElementById('attendanceScore')?.textContent || '--';
+      const testScore = document.getElementById('testScore')?.textContent || '--';
+      const quizScoreDisplay = document.getElementById('quizScoreDisplay')?.textContent || '--';
+      
+      // Get strengths and weaknesses
+      const strengthsElement = document.getElementById('strengthsList');
+      const weaknessesElement = document.getElementById('weaknessesList');
+      const strengthsText = strengthsElement ? strengthsElement.textContent.trim() : 'No strengths data available';
+      const weaknessesText = weaknessesElement ? weaknessesElement.textContent.trim() : 'No weaknesses data available';
+      
+      // Create PDF
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF();
+      
+      // Add content to PDF
+      let yPosition = 20;
+      const lineHeight = 7;
+      const pageWidth = doc.internal.pageSize.getWidth();
+      const margin = 20;
+      
+      // Title
+      doc.setFontSize(20);
+      doc.text('Student Performance Report', pageWidth / 2, yPosition, { align: 'center' });
+      yPosition += 15;
+      
+      // Report Date
+      doc.setFontSize(12);
+      doc.text(`Report Date: ${new Date().toLocaleDateString()}`, margin, yPosition);
+      yPosition += lineHeight * 2;
+      
+      // Overall Performance
+      doc.setFontSize(14);
+      doc.text('Overall Performance', margin, yPosition);
+      yPosition += lineHeight;
+      doc.setFontSize(12);
+      doc.text(`Score: ${overallScore}`, margin, yPosition);
+      yPosition += lineHeight * 2;
+      
+      // Attendance
+      doc.setFontSize(14);
+      doc.text('Attendance', margin, yPosition);
+      yPosition += lineHeight;
+      doc.setFontSize(12);
+      doc.text(attendanceScore, margin, yPosition);
+      yPosition += lineHeight * 2;
+      
+      // Test Scores
+      doc.setFontSize(14);
+      doc.text('Test Scores', margin, yPosition);
+      yPosition += lineHeight;
+      doc.setFontSize(12);
+      doc.text(testScore, margin, yPosition);
+      yPosition += lineHeight * 2;
+      
+      // Problem Solving Quiz
+      doc.setFontSize(14);
+      doc.text('Problem Solving Quiz', margin, yPosition);
+      yPosition += lineHeight;
+      doc.setFontSize(12);
+      doc.text(quizScoreDisplay, margin, yPosition);
+      yPosition += lineHeight * 2;
+      
+      // Strengths
+      doc.setFontSize(14);
+      doc.text('Strengths', margin, yPosition);
+      yPosition += lineHeight;
+      doc.setFontSize(10);
+      const strengthsLines = doc.splitTextToSize(strengthsText, pageWidth - margin * 2);
+      doc.text(strengthsLines, margin, yPosition);
+      yPosition += lineHeight * strengthsLines.length + 5;
+      
+      // Weaknesses
+      doc.setFontSize(14);
+      doc.text('Weaknesses', margin, yPosition);
+      yPosition += lineHeight;
+      doc.setFontSize(10);
+      const weaknessesLines = doc.splitTextToSize(weaknessesText, pageWidth - margin * 2);
+      doc.text(weaknessesLines, margin, yPosition);
+      yPosition += lineHeight * weaknessesLines.length + 5;
+      
+      // Summary
+      doc.setFontSize(14);
+      doc.text('Summary', margin, yPosition);
+      yPosition += lineHeight;
+      doc.setFontSize(12);
+      doc.text('This report summarizes your academic performance.', margin, yPosition);
+      yPosition += lineHeight;
+      doc.text('Generated by EduVista', margin, yPosition);
+      
+      // Save PDF
+      doc.save(`Student_Performance_Report_${new Date().toISOString().split('T')[0]}.pdf`);
+    });
+  </script>
+
+  <!-- PDF library and report generator -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="results-calculation.js?v=${Date.now()}"></script>
+
+  <!-- Firebase SDK -->
+  <script type="module">
+    // Import the functions you need from the SDKs
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { 
+      getAuth, 
+      onAuthStateChanged 
+    } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+    import { 
+      getFirestore, 
+      doc, 
+      getDoc,
+      collection,
+      query,
+      where,
+      getDocs
+    } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+    // Your web app's Firebase configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyAvC2UrHIrOjRQrvJm1YSMFoz24N3c0RD0",
+      authDomain: "eduvista-1d822.firebaseapp.com",
+      projectId: "eduvista-1d822",
+      storageBucket: "eduvista-1d822.firebasestorage.app",
+      messagingSenderId: "902087761435",
+      appId: "1:902087761435:web:e24671b72153e3b27c62be",
+      measurementId: "G-MT39PVBZH9"
+    };
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    // Generate stars for background
+    function generateStars() {
+      const stars = document.getElementById('stars');
+      const count = 200;
+      
+      for (let i = 0; i < count; i++) {
+        const star = document.createElement('div');
+        star.className = 'star';
+        star.style.width = Math.random() * 3 + 'px';
+        star.style.height = star.style.width;
+        star.style.left = Math.random() * 100 + '%';
+        star.style.top = Math.random() * 100 + '%';
+        star.style.animationDelay = Math.random() * 3 + 's';
+        stars.appendChild(star);
+      }
+    }
+
+    // Format date
+    function formatDate(date) {
+      return new Date(date).toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric'
+      });
+    }
+
+    // Calculate average
+    function calculateAverage(scores) {
+      if (!scores || scores.length === 0) return 0;
+      const sum = scores.reduce((a, b) => a + b, 0);
+      return Math.round((sum / scores.length) * 10) / 10;
+    }
+
+    // Update progress bar
+    function updateProgressBar(elementId, percentage) {
+      const bar = document.getElementById(elementId);
+      if (bar) {
+        bar.style.width = `${Math.min(100, Math.max(0, percentage))}%`;
+      }
+    }
+
+    // Load student data
+    async function loadStudentData(userId) {
+      try {
+        // Get performance document (attendance, assignments, optional testScores)
+        const performanceRef = doc(db, 'performance', userId);
+        const performanceSnap = await getDoc(performanceRef);
+
+        const performanceData = performanceSnap.exists() ? performanceSnap.data() : {};
+
+        // Get user document (testScores saved from test-scores.html)
+        const userRef = doc(db, 'users', userId);
+        const userSnap = await getDoc(userRef);
+        const userData = userSnap.exists() ? userSnap.data() : {};
+
+        // Get events from top-level 'events' collection
+        const eventsRef = collection(db, 'events');
+        const eventsQuery = query(eventsRef, where('userId', '==', userId));
+        const eventsSnap = await getDocs(eventsQuery);
+        const events = [];
+        eventsSnap.forEach(docSnap => {
+          const d = docSnap.data();
+          events.push(d);
+        });
+
+        // Get logical quiz results (problem-solving) from users/{uid}/quizResults
+        const quizRef = collection(db, 'users', userId, 'quizResults');
+        const quizSnap = await getDocs(quizRef);
+        let quizScore = 0; // percentage 0-100
+        if (!quizSnap.empty) {
+          let latestDoc = null;
+          quizSnap.forEach(docSnap => {
+            const d = docSnap.data();
+            if (!latestDoc || (d.timestamp?.toMillis?.() || 0) > (latestDoc.timestamp?.toMillis?.() || 0)) {
+              latestDoc = d;
+            }
+          });
+          if (latestDoc && typeof latestDoc.percentage === 'number') {
+            quizScore = latestDoc.percentage;
+          }
+        }
+
+        // Prepare attendance
+        let attendance = 0;
+        const rawAttendance = performanceData.attendance;
+        if (typeof rawAttendance === 'object' && rawAttendance !== null) {
+          if (rawAttendance.present !== undefined && rawAttendance.total) {
+            attendance = (rawAttendance.present / rawAttendance.total) * 100;
+          }
+        } else if (!isNaN(parseFloat(rawAttendance))) {
+          attendance = parseFloat(rawAttendance);
+        }
+
+        // Prepare test scores (prefer users.testScores, fallback to performance.testScores)
+        const rawTestScores = Array.isArray(userData.testScores)
+          ? userData.testScores
+          : (Array.isArray(performanceData.testScores) ? performanceData.testScores : []);
+
+        const testScores = rawTestScores.map(test => ({
+          score: typeof test.obtainedMarks !== 'undefined' ? test.obtainedMarks : (test.score || 0),
+          maxScore: typeof test.maxMarks !== 'undefined' ? test.maxMarks : (test.maxScore || 100),
+          subject: test.name || test.subject || 'General',
+          date: test.timestamp ? new Date(test.timestamp) : (test.date ? new Date(test.date) : new Date())
+        }));
+
+        // Prepare assignments from performance.assignments (if any), with localStorage fallback
+        let rawAssignments = Array.isArray(performanceData.assignments) ? performanceData.assignments : [];
+
+        if (!rawAssignments.length) {
+          try {
+            const stored = localStorage.getItem('studentAssignments');
+            const parsed = stored ? JSON.parse(stored) : [];
+            if (Array.isArray(parsed)) {
+              rawAssignments = parsed;
+            }
+          } catch (e) {
+            console.error('Error reading assignments from localStorage:', e);
+          }
+        }
+
+        const assignments = rawAssignments.map(assignment => ({
+          title: assignment.title || assignment.name || 'Untitled',
+          score: typeof assignment.obtained !== 'undefined'
+            ? assignment.obtained
+            : (typeof assignment.obtainedMarks !== 'undefined'
+              ? assignment.obtainedMarks
+              : (assignment.score || 0)),
+          maxScore: typeof assignment.maximum !== 'undefined'
+            ? assignment.maximum
+            : (typeof assignment.maxMarks !== 'undefined'
+              ? assignment.maxMarks
+              : (assignment.maxScore || 100)),
+          subject: assignment.subject || 'General',
+          submitted: assignment.date ? new Date(assignment.date) : new Date()
+        }));
+
+        // Calculate averages
+        const testAverage = calculateAverage(testScores.map(t => (t.score / t.maxScore) * 100));
+        const assignmentAverage = calculateAverage(assignments.map(a => (a.score / a.maxScore) * 100));
+
+        // Event participation score (0-100) based on number of events
+        const eventsCount = Array.isArray(events) ? events.length : 0;
+        const eventScore = Math.min(eventsCount * 20, 100); // 5+ events => 100
+
+        // Use weighted overall score including events and quiz (problem solving)
+        const weights = {
+          attendance: 0.20,      // 20%
+          tests: 0.30,           // 30%
+          assignments: 0.25,    // 25%
+          events: 0.10,         // 10%
+          problemSolving: 0.15  // 15%
+        };
+
+        const attendanceScoreWeighted = attendance * weights.attendance;
+        const testScoreWeighted = testAverage * weights.tests;
+        const assignmentScoreWeighted = assignmentAverage * weights.assignments;
+        const eventScoreWeighted = eventScore * weights.events;
+        const quizScoreWeighted = quizScore * weights.problemSolving;
+
+        const overallScore = Math.round(
+          attendanceScoreWeighted +
+          testScoreWeighted +
+          assignmentScoreWeighted +
+          eventScoreWeighted +
+          quizScoreWeighted
+        );
+
+        // Update UI
+        document.getElementById('overallScore').textContent = `${overallScore}%`;
+        document.getElementById('attendanceScore').textContent = `${attendance}%`;
+        document.getElementById('testScore').textContent = `${testAverage}%`;
+
+        const quizScoreDisplay = document.getElementById('quizScoreDisplay');
+        if (quizScoreDisplay) {
+          quizScoreDisplay.textContent = `Problem Solving Quiz: ${Math.round(quizScore)}%`;
+        }
+
+        updateProgressBar('performanceBar', overallScore);
+        updateProgressBar('attendanceBar', attendance);
+        updateProgressBar('testScoreBar', testAverage);
+
+        // Update performance status
+        const statusElement = document.getElementById('performanceStatus');
+        if (overallScore >= 80) {
+          statusElement.textContent = 'Excellent Performance!';
+          statusElement.className = 'text-green-400';
+        } else if (overallScore >= 60) {
+          statusElement.textContent = 'Good Performance';
+          statusElement.className = 'text-blue-400';
+        } else {
+          statusElement.textContent = 'Needs Improvement';
+          statusElement.className = 'text-amber-400';
+        }
+
+        // Update assignments
+        const assignmentStats = document.getElementById('assignmentStats');
+        if (assignments.length > 0) {
+          assignmentStats.innerHTML = `
+            <div class="space-y-2">
+              ${assignments.slice(0, 3).map(assignment => `
+                <div class="flex justify-between items-center p-3 bg-gray-800 rounded-lg">
+                  <div class="truncate">
+                    <div class="font-medium">${assignment.title}</div>
+                    <div class="text-sm text-gray-400">${assignment.subject}</div>
+                  </div>
+                  <div class="text-right">
+                    <div class="font-bold">${assignment.score}/${assignment.maxScore}</div>
+                    <div class="text-xs text-gray-400">${formatDate(assignment.submitted)}</div>
+                  </div>
+                </div>
+              `).join('')}
+              ${assignments.length > 3 ? 
+                `<div class="text-center text-sm text-gray-400 mt-2">+${assignments.length - 3} more assignments</div>` : 
+                ''}
+            </div>
+          `;
+        } else {
+          assignmentStats.innerHTML = `
+            <div class="text-center py-4 text-gray-400">
+              <i class="fas fa-inbox text-4xl mb-2 opacity-50"></i>
+              <p>No assignments found</p>
+            </div>
+          `;
+        }
+
+        // Build strengths and weaknesses based on scores
+        const strengths = [];
+        const weaknesses = [];
+
+        // Overall
+        if (overallScore >= 90) {
+          strengths.push('Outstanding overall performance across attendance, tests, and assignments.');
+        } else if (overallScore >= 80) {
+          strengths.push('Excellent overall performance. You are consistently performing well.');
+        } else if (overallScore >= 70) {
+          strengths.push('Good overall performance. A bit more focus can push you into the top band.');
+        } else if (overallScore >= 60) {
+          weaknesses.push('Overall performance is just above passing. Strengthen weaker areas to improve.');
+        } else {
+          weaknesses.push('Overall performance is below 60%. Focus on improving tests, assignments, or attendance.');
+        }
+
+        // Attendance
+        if (attendance >= 90) {
+          strengths.push('Excellent attendance. You rarely miss classes, which strongly supports your learning.');
+        } else if (attendance >= 80) {
+          strengths.push('Very good attendance. Keep maintaining your regular presence in classes.');
+        } else if (attendance >= 70) {
+          weaknesses.push('Attendance is moderate. Improving consistency could boost your understanding.');
+        } else if (attendance > 0) {
+          weaknesses.push('Attendance is low. Try to attend more classes regularly to avoid gaps in learning.');
+        }
+
+        // Event participation
+        if (eventsCount >= 3) {
+          strengths.push(`Active participation in ${eventsCount} learning events, workshops, or seminars.`);
+        } else if (eventsCount === 0) {
+          weaknesses.push('No recorded event participation. Engaging in workshops and seminars can boost your skills and confidence.');
+        }
+
+        // Logical quiz / problem solving
+        if (quizScore >= 85) {
+          strengths.push('Excellent logical reasoning and problem-solving skills based on your quiz performance.');
+        } else if (quizScore >= 60) {
+          strengths.push('Good problem-solving skills. Regular practice with logical puzzles can push you even higher.');
+        } else if (quizScore > 0) {
+          weaknesses.push('Problem-solving score is low. Practice more logical reasoning questions to strengthen this skill.');
+        }
+
+        // Tests
+        if (testAverage >= 90) {
+          strengths.push('Exceptional test performance. You have a very strong grasp of exam content.');
+        } else if (testAverage >= 80) {
+          strengths.push('Consistently high test scores. Your exam preparation is effective.');
+        } else if (testAverage >= 70) {
+          strengths.push('Good test performance. A bit more revision and practice can lift you higher.');
+        } else if (testAverage >= 60) {
+          weaknesses.push('Test scores are borderline. Focus on understanding mistakes and revising weak topics.');
+        } else if (testAverage > 0) {
+          weaknesses.push('Test scores are below 60%. Consider revising concepts regularly and practicing more questions.');
+        }
+
+        // Assignments
+        if (assignmentAverage >= 90) {
+          strengths.push('Excellent assignment work. Your homework and projects are of very high quality.');
+        } else if (assignmentAverage >= 80) {
+          strengths.push('Strong assignment performance. You are doing well in coursework.');
+        } else if (assignmentAverage >= 70) {
+          strengths.push('Good assignment scores. Paying more attention to details can improve them further.');
+        } else if (assignmentAverage >= 60) {
+          weaknesses.push('Assignment scores are average. Spend a bit more time on planning and review.');
+        } else if (assignmentAverage > 0) {
+          weaknesses.push('Assignment scores are below 60%. Spend more time on homework and projects and seek feedback.');
+        }
+
+        const strengthsList = document.getElementById('strengthsList');
+        const weaknessesList = document.getElementById('weaknessesList');
+
+        if (strengths.length > 0) {
+          strengthsList.innerHTML = strengths
+            .map(item => `<div class="flex items-start"><span class="mt-1 mr-2 text-green-400">•</span><p>${item}</p></div>`)
+            .join('');
+        } else {
+          strengthsList.innerHTML = '<p class="text-gray-500">Keep working consistently and your strengths will appear here.</p>';
+        }
+
+        if (weaknesses.length > 0) {
+          weaknessesList.innerHTML = weaknesses
+            .map(item => `<div class="flex items-start"><span class="mt-1 mr-2 text-red-400">•</span><p>${item}</p></div>`)
+            .join('');
+        } else {
+          weaknessesList.innerHTML = '<p class="text-gray-500">No major weaknesses detected based on your current scores.</p>';
+        }
+
+        // Create performance chart
+        createPerformanceChart(testScores);
+
+        // Create breakdown chart
+        createBreakdownChart(attendance, testAverage, assignmentAverage, eventScore, quizScore, overallScore);
+
+      } catch (error) {
+        console.error('Error loading student data:', error);
+        alert('Failed to load student data. Please try again later.');
+      }
+    }
+
+    // Create breakdown bar chart (includes events and problem-solving)
+    function createBreakdownChart(attendance, testAverage, assignmentAverage, eventScore, quizScore, overallScore) {
+      const ctx = document.getElementById('breakdownChart');
+      if (!ctx) return;
+
+      const chartCtx = ctx.getContext('2d');
+
+      new Chart(chartCtx, {
+        type: 'bar',
+        data: {
+          labels: ['Attendance', 'Tests', 'Assignments', 'Events', 'Problem Solving', 'Overall'],
+          datasets: [{
+            label: 'Score (%)',
+            data: [attendance, testAverage, assignmentAverage, eventScore, quizScore, overallScore],
+            backgroundColor: [
+              'rgba(16, 185, 129, 0.6)',
+              'rgba(59, 130, 246, 0.6)',
+              'rgba(168, 85, 247, 0.6)',
+              'rgba(251, 191, 36, 0.6)',
+              'rgba(245, 158, 11, 0.6)',
+              'rgba(96, 165, 250, 0.6)'
+            ],
+            borderColor: [
+              'rgba(16, 185, 129, 1)',
+              'rgba(59, 130, 246, 1)',
+              'rgba(168, 85, 247, 1)',
+              'rgba(251, 191, 36, 1)',
+              'rgba(245, 158, 11, 1)',
+              'rgba(96, 165, 250, 1)'
+            ],
+            borderWidth: 1,
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            y: {
+              beginAtZero: true,
+              max: 100,
+              ticks: {
+                color: '#9CA3AF'
+              },
+              grid: {
+                color: 'rgba(255, 255, 255, 0.1)'
+              }
+            },
+            x: {
+              ticks: {
+                color: '#9CA3AF'
+              },
+              grid: {
+                display: false
+              }
+            }
+          },
+          plugins: {
+            legend: {
+              display: false
+            },
+            tooltip: {
+              backgroundColor: 'rgba(17, 24, 39, 0.9)',
+              titleColor: '#FFD700',
+              bodyColor: '#E5E7EB',
+              borderColor: 'rgba(255, 215, 0, 0.2)',
+              borderWidth: 1,
+              padding: 10,
+            }
+          }
+        }
+      });
+    }
+
+    // Create performance chart
+    function createPerformanceChart(testScores) {
+      const ctx = document.getElementById('performanceChart').getContext('2d');
+      
+      // Sort tests by date
+      const sortedTests = [...testScores].sort((a, b) => a.date - b.date);
+      
+      new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: sortedTests.map((_, i) => `Test ${i + 1}`),
+          datasets: [{
+            label: 'Test Scores',
+            data: sortedTests.map(test => (test.score / test.maxScore) * 100),
+            borderColor: 'rgba(255, 193, 7, 0.8)',
+            backgroundColor: 'rgba(255, 193, 7, 0.1)',
+            borderWidth: 2,
+            tension: 0.3,
+            fill: true,
+            pointBackgroundColor: '#FFD700',
+            pointBorderColor: '#fff',
+            pointBorderWidth: 2
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            y: {
+              beginAtZero: true,
+              max: 100,
+              grid: {
+                color: 'rgba(255, 255, 255, 0.1)'
+              },
+              ticks: {
+                color: '#9CA3AF'
+              }
+            },
+            x: {
+              grid: {
+                display: false
+              },
+              ticks: {
+                color: '#9CA3AF'
+              }
+            }
+          },
+          plugins: {
+            legend: {
+              display: false
+            },
+            tooltip: {
+              backgroundColor: 'rgba(17, 24, 39, 0.9)',
+              titleColor: '#FFD700',
+              bodyColor: '#E5E7EB',
+              borderColor: 'rgba(255, 215, 0, 0.2)',
+              borderWidth: 1,
+              padding: 12,
+              callbacks: {
+                label: function(context) {
+                  const test = sortedTests[context.dataIndex];
+                  return [
+                    `Score: ${test.score}/${test.maxScore}`,
+                    `Subject: ${test.subject}`,
+                    `Date: ${formatDate(test.date)}`
+                  ];
+                }
+              }
+            }
+          }
+        }
+      });
+    }
+
+    // Initialize the page
+    document.addEventListener('DOMContentLoaded', () => {
+      generateStars();
+      
+      // Check auth state
+      onAuthStateChanged(auth, (user) => {
+        if (user) {
+          // User is signed in
+          loadStudentData(user.uid);
+        } else {
+          // User is signed out, redirect to login
+          window.location.href = 'auth.html';
+        }
+      });
+    });
+  </script>
+</body>
+</html>

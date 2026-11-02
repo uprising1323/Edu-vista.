@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Attendance Input - EduVista</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #0a1128 0%, #1a2332 25%, #2d3e5f 50%, #1a2332 75%, #0a1128 100%);
+      min-height: 100vh;
+      overflow-x: hidden;
+      position: relative;
+      color: white;
+    }
+
+    /* Animated stars background */
+    .stars {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .star {
+      position: absolute;
+      background: white;
+      border-radius: 50%;
+      animation: twinkle 3s infinite;
+    }
+
+    @keyframes twinkle {
+      0%, 100% { opacity: 0.3; }
+      50% { opacity: 1; }
+    }
+
+    /* Rotating chakra */
+    .chakra-container {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 0;
+      opacity: 0.15;
+      pointer-events: none;
+    }
+
+    .chakra {
+      width: 500px;
+      height: 500px;
+      animation: rotate 20s linear infinite;
+    }
+
+    @keyframes rotate {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    /* Content container */
+    .content {
+      position: relative;
+      z-index: 10;
+      padding: 2rem;
+    }
+
+    /* Navigation bar */
+    .navbar {
+      background: rgba(255, 215, 0, 0.95);
+      backdrop-filter: blur(10px);
+      padding: 1rem 2rem;
+      box-shadow: 0 4px 20px rgba(255, 215, 0, 0.3);
+      border-radius: 15px;
+      margin-bottom: 2rem;
+    }
+
+    .navbar h1 {
+      color: #0a1128;
+      font-size: 1.8rem;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    /* Main card */
+    .main-card {
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 20px;
+      padding: 3rem;
+      max-width: 800px;
+      margin: 0 auto;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+      border: 2px solid rgba(255, 215, 0, 0.5);
+      animation: slideUp 0.8s ease-out;
+    }
+
+    @keyframes slideUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .main-card h2 {
+      color: #0a1128;
+      font-size: 2rem;
+      margin-bottom: 1.5rem;
+      text-align: center;
+      font-weight: bold;
+    }
+
+    .form-group {
+      margin-bottom: 2rem;
+    }
+
+    .form-group label {
+      display: block;
+      color: #0a1128;
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+    }
+
+    .form-group input {
+      width: 100%;
+      padding: 1rem;
+      border: 2px solid #FFD700;
+      border-radius: 10px;
+      font-size: 1.1rem;
+      color: #0a1128;
+      background: rgba(255, 255, 255, 0.9);
+      transition: all 0.3s ease;
+    }
+
+    .form-group input:focus {
+      outline: none;
+      border-color: #FFA500;
+      box-shadow: 0 0 15px rgba(255, 215, 0, 0.5);
+      transform: scale(1.02);
+    }
+
+    .percentage-display {
+      text-align: center;
+      font-size: 3rem;
+      font-weight: bold;
+      color: #FFD700;
+      margin: 2rem 0;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+    }
+
+    .attendance-bar {
+      width: 100%;
+      height: 30px;
+      background: rgba(200, 200, 200, 0.3);
+      border-radius: 15px;
+      overflow: hidden;
+      margin-bottom: 2rem;
+      border: 2px solid #FFD700;
+    }
+
+    .attendance-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #FFD700, #FFA500);
+      transition: width 0.5s ease;
+      box-shadow: 0 0 10px rgba(255, 215, 0, 0.8);
+    }
+
+    .info-box {
+      background: rgba(255, 215, 0, 0.1);
+      border-left: 4px solid #FFD700;
+      padding: 1rem;
+      border-radius: 10px;
+      margin-bottom: 2rem;
+      color: #0a1128;
+    }
+
+    .btn {
+      padding: 1rem 2.5rem;
+      font-size: 1.1rem;
+      font-weight: bold;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #FFD700, #FFA500);
+      color: #0a1128;
+      box-shadow: 0 4px 15px rgba(255, 215, 0, 0.4);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 6px 20px rgba(255, 215, 0, 0.6);
+    }
+
+    .btn-secondary {
+      background: rgba(10, 17, 40, 0.8);
+      color: white;
+      border: 2px solid #FFD700;
+    }
+
+    .btn-secondary:hover {
+      background: rgba(10, 17, 40, 1);
+      transform: translateY(-3px);
+    }
+
+    .button-group {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      margin-top: 2rem;
+    }
+
+    .error-message {
+      color: #ff4444;
+      font-size: 0.9rem;
+      margin-top: 0.5rem;
+      display: none;
+    }
+
+    .success-message {
+      background: rgba(76, 175, 80, 0.2);
+      border: 2px solid #4CAF50;
+      color: #2e7d32;
+      padding: 1rem;
+      border-radius: 10px;
+      text-align: center;
+      margin-bottom: 1rem;
+      display: none;
+      font-weight: 600;
+    }
+
+    @media (max-width: 768px) {
+      .main-card {
+        padding: 2rem 1.5rem;
+      }
+
+      .navbar h1 {
+        font-size: 1.3rem;
+      }
+
+      .button-group {
+        flex-direction: column;
+      }
+
+      .btn {
+        width: 100%;
+      }
+
+      .chakra {
+        width: 300px;
+        height: 300px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Animated stars -->
+  <div class="stars" id="stars"></div>
+
+  <!-- Rotating chakra -->
+  <div class="chakra-container">
+    <svg class="chakra" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="goldGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" style="stop-color:#FFD700;stop-opacity:1" />
+          <stop offset="50%" style="stop-color:#FFA500;stop-opacity:1" />
+          <stop offset="100%" style="stop-color:#FFD700;stop-opacity:1" />
+        </linearGradient>
+      </defs>
+      
+      <!-- Outer circle -->
+      <circle cx="100" cy="100" r="90" fill="none" stroke="url(#goldGradient)" stroke-width="3"/>
+      
+      <!-- Inner patterns -->
+      <circle cx="100" cy="100" r="70" fill="none" stroke="url(#goldGradient)" stroke-width="2"/>
+      <circle cx="100" cy="100" r="50" fill="none" stroke="url(#goldGradient)" stroke-width="2"/>
+      
+      <!-- Petals/Spokes -->
+      <g stroke="url(#goldGradient)" stroke-width="2" fill="none">
+        <path d="M 100 10 Q 120 50 100 90" />
+        <path d="M 100 10 Q 80 50 100 90" />
+        <path d="M 190 100 Q 150 120 110 100" />
+        <path d="M 190 100 Q 150 80 110 100" />
+        <path d="M 100 190 Q 120 150 100 110" />
+        <path d="M 100 190 Q 80 150 100 110" />
+        <path d="M 10 100 Q 50 120 90 100" />
+        <path d="M 10 100 Q 50 80 90 100" />
+        <path d="M 145 45 Q 120 70 100 90" />
+        <path d="M 55 45 Q 80 70 100 90" />
+        <path d="M 145 155 Q 120 130 100 110" />
+        <path d="M 55 155 Q 80 130 100 110" />
+      </g>
+      
+      <!-- Center ornament -->
+      <circle cx="100" cy="100" r="15" fill="url(#goldGradient)"/>
+      <circle cx="100" cy="100" r="8" fill="#0a1128"/>
+    </svg>
+  </div>
+
+  <!-- Main content -->
+  <div class="content">
+    <!-- Navigation bar -->
+    <div class="navbar">
+      <h1><i class="fas fa-user-check"></i> Attendance Input</h1>
+    </div>
+
+    <!-- Main card -->
+    <div class="main-card">
+      <h2><i class="fas fa-calendar-check"></i> Record Your Attendance</h2>
+
+      <div id="successMessage" class="success-message">
+        <i class="fas fa-check-circle"></i> Attendance saved successfully!
+      </div>
+
+      <div class="info-box">
+        <i class="fas fa-info-circle"></i> <strong>Important:</strong> Enter your overall attendance percentage out of 100. This will help us analyze your academic commitment and provide personalized recommendations.
+      </div>
+
+      <form id="attendanceForm">
+        <div class="form-group">
+          <label for="attendance">
+            <i class="fas fa-percentage"></i> Attendance Percentage (0-100)
+          </label>
+          <input 
+            type="number" 
+            id="attendance" 
+            name="attendance" 
+            min="0" 
+            max="100" 
+            step="0.01"
+            placeholder="Enter your attendance percentage"
+            required
+          >
+          <div class="error-message" id="errorMessage">
+            Please enter a valid percentage between 0 and 100
+          </div>
+        </div>
+
+        <div class="percentage-display" id="percentageDisplay">0%</div>
+
+        <div class="attendance-bar">
+          <div class="attendance-fill" id="attendanceFill" style="width: 0%"></div>
+        </div>
+
+        <div class="info-box" style="background: rgba(100, 150, 255, 0.1); border-left-color: #6496ff;">
+          <strong>Attendance Impact:</strong>
+          <ul style="margin-top: 0.5rem; margin-left: 1.5rem; color: #0a1128;">
+            <li>90-100%: Excellent commitment to learning</li>
+            <li>75-89%: Good attendance, room for improvement</li>
+            <li>60-74%: Moderate attendance, needs attention</li>
+            <li>Below 60%: Critical attendance level</li>
+          </ul>
+        </div>
+
+        <div class="button-group">
+          <button type="submit" class="btn btn-primary">
+            <i class="fas fa-save"></i> Save & Continue
+          </button>
+          <button type="button" class="btn btn-secondary" onclick="goBack()">
+            <i class="fas fa-arrow-left"></i> Back to Menu
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Firebase SDK -->
+  <!-- Firebase SDK -->
+  <script type="module">
+    // Import the functions you need from the SDKs you need
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { 
+      getAuth, 
+      onAuthStateChanged,
+      signOut
+    } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+    import { 
+      getFirestore, 
+      doc, 
+      setDoc,
+      getDoc
+    } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+    // Your web app's Firebase configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyAvC2UrHIrOjRQrvJm1YSMFoz24N3c0RD0",
+      authDomain: "eduvista-1d822.firebaseapp.com",
+      projectId: "eduvista-1d822",
+      storageBucket: "eduvista-1d822.firebasestorage.app",
+      messagingSenderId: "902087761435",
+      appId: "1:902087761435:web:e24671b72153e3b27c62be",
+      measurementId: "G-MT39PVBZH9"
+    };
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    // Make Firebase functions available globally
+    window.firebaseApp = {
+      auth,
+      db,
+      firestore: {
+        doc: (...args) => doc(db, ...args),
+        setDoc,
+        getDoc
+      }
+    };
+    
+    console.log('Firebase initialized');
+  </script>
+
+  <script>
+    // Create stars
+    const starsContainer = document.getElementById('stars');
+    for (let i = 0; i < 100; i++) {
+      const star = document.createElement('div');
+      star.className = 'star';
+      star.style.width = Math.random() * 3 + 'px';
+      star.style.height = star.style.width;
+      star.style.left = Math.random() * 100 + '%';
+      star.style.top = Math.random() * 100 + '%';
+      star.style.animationDelay = Math.random() * 3 + 's';
+      starsContainer.appendChild(star);
+    }
+
+    // Form handling
+    const attendanceInput = document.getElementById('attendance');
+    const percentageDisplay = document.getElementById('percentageDisplay');
+    const attendanceFill = document.getElementById('attendanceFill');
+    const errorMessage = document.getElementById('errorMessage');
+    const successMessage = document.getElementById('successMessage');
+    const form = document.getElementById('attendanceForm');
+
+    // Update display on input
+    attendanceInput.addEventListener('input', function() {
+      let value = parseFloat(this.value) || 0;
+      
+      if (value < 0) value = 0;
+      if (value > 100) value = 100;
+      
+      percentageDisplay.textContent = value.toFixed(1) + '%';
+      attendanceFill.style.width = value + '%';
+      
+      // Change color based on value
+      if (value >= 90) {
+        attendanceFill.style.background = 'linear-gradient(90deg, #4CAF50, #8BC34A)';
+      } else if (value >= 75) {
+        attendanceFill.style.background = 'linear-gradient(90deg, #FFD700, #FFA500)';
+      } else if (value >= 60) {
+        attendanceFill.style.background = 'linear-gradient(90deg, #FF9800, #FF5722)';
+      } else {
+        attendanceFill.style.background = 'linear-gradient(90deg, #f44336, #c62828)';
+      }
+      
+      errorMessage.style.display = 'none';
+    });
+
+    // Load saved data
+    window.addEventListener('load', function() {
+      const savedAttendance = localStorage.getItem('attendance');
+      if (savedAttendance) {
+        attendanceInput.value = savedAttendance;
+        attendanceInput.dispatchEvent(new Event('input'));
+      }
+    });
+
+    // Form submission
+    form.addEventListener('submit', async function(e) {
+      e.preventDefault();
+      
+      const value = parseFloat(attendanceInput.value);
+      
+      if (isNaN(value) || value < 0 || value > 100) {
+        errorMessage.textContent = 'Please enter a valid percentage between 0 and 100';
+        errorMessage.style.display = 'block';
+        attendanceInput.focus();
+        return;
+      }
+      
+      // Get Firebase instances from the global scope
+      const { auth, firestore } = window.firebaseApp || {};
+      if (!auth || !firestore) {
+        console.error('Firebase not initialized');
+        errorMessage.textContent = 'Error: Firebase not properly initialized';
+        errorMessage.style.display = 'block';
+        return;
+      }
+      
+      const user = auth.currentUser;
+      if (!user) {
+        errorMessage.textContent = 'Please log in to save your attendance';
+        errorMessage.style.display = 'block';
+        window.location.href = 'auth.html';
+        return;
+      }
+      
+      try {
+        console.log('Attempting to save attendance...');
+        console.log('User UID:', user.uid);
+        
+        // Save to Firestore
+        const userRef = firestore.doc('performance', user.uid);
+        console.log('User reference created:', userRef);
+        
+        const userData = {
+          attendance: value,
+          lastUpdated: new Date().toISOString(),
+          studentName: user.displayName || user.email.split('@')[0],
+          studentId: user.uid.substring(0, 8),
+          email: user.email
+        };
+        
+        console.log('Data to save:', userData);
+        
+        await firestore.setDoc(userRef, userData, { merge: true });
+        console.log('Document successfully written!');
+        
+        // Verify the write
+        const docSnap = await firestore.getDoc(userRef);
+        if (docSnap.exists()) {
+          console.log('Document data:', docSnap.data());
+        } else {
+          console.log('No such document!');
+        }
+        
+        // Save to localStorage as fallback
+        localStorage.setItem('attendance', value);
+        
+        // Show success message
+        successMessage.textContent = 'Attendance saved successfully!';
+        successMessage.style.display = 'block';
+        errorMessage.style.display = 'none';
+        
+        // Hide success message and redirect after 2 seconds
+        setTimeout(() => {
+          successMessage.style.display = 'none';
+          window.location.href = 'test-scores.html';
+        }, 2000);
+        
+      } catch (error) {
+        console.error('Error saving attendance:', error);
+        console.error('Error details:', {
+          name: error.name,
+          message: error.message,
+          code: error.code,
+          stack: error.stack
+        });
+        errorMessage.textContent = `Failed to save attendance: ${error.message}`;
+        errorMessage.style.display = 'block';
+      }
+    });
+    
+    // Load saved data from Firestore
+    onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        try {
+          const userRef = doc(db, 'performance', user.uid);
+          const docSnap = await getDoc(userRef);
+          
+          if (docSnap.exists()) {
+            const data = docSnap.data();
+            if (data.attendance !== undefined) {
+              attendanceInput.value = data.attendance;
+              attendanceInput.dispatchEvent(new Event('input'));
+            }
+          }
+        } catch (error) {
+          console.error('Error loading attendance:', error);
+        }
+      }
+    });
+
+    function goBack() {
+      window.location.href = 'index.html';
+    }
+
+    // Prevent form submission on Enter key in input
+    attendanceInput.addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        form.dispatchEvent(new Event('submit'));
+      }
+    });
+  </script>
+</body>
+</html>

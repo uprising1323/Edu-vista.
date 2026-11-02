@@ -1,0 +1,870 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Test Results Input - EduVista</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
+  <!-- Firebase SDK -->
+  <script type="module">
+    // Import the functions you need from the SDKs you need
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
+    import { 
+      getAuth, 
+      onAuthStateChanged
+    } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-auth.js";
+    import { 
+      getFirestore, 
+      doc, 
+      setDoc,
+      collection,
+      addDoc,
+      updateDoc
+    } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
+
+    // Your web app's Firebase configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyAvC2UrHIrOjRQrvJm1YSMFoz24N3c0RD0",
+      authDomain: "eduvista-1d822.firebaseapp.com",
+      projectId: "eduvista-1d822",
+      storageBucket: "eduvista-1d822.firebasestorage.app",
+      messagingSenderId: "902087761435",
+      appId: "1:902087761435:web:e24671b72153e3b27c62be",
+      measurementId: "G-MT39PVBZH9"
+    };
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    // Make Firebase functions available globally
+    window.firebaseApp = {
+      auth,
+      db,
+      firestore: {
+        doc: (...args) => doc(db, ...args),
+        setDoc,
+        updateDoc,
+        collection: (...args) => collection(db, ...args),
+        addDoc
+      }
+    };
+    
+    console.log('Firebase initialized');
+  </script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #0a1628 0%, #1a2f4f 50%, #0f1b2e 100%);
+      min-height: 100vh;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    /* Animated Universe Background */
+    .universe-bg {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      overflow: hidden;
+    }
+
+    .stars {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      background-image: 
+        radial-gradient(2px 2px at 20px 30px, #eee, rgba(0,0,0,0)),
+        radial-gradient(2px 2px at 60px 70px, #fff, rgba(0,0,0,0)),
+        radial-gradient(1px 1px at 50px 50px, #ddd, rgba(0,0,0,0)),
+        radial-gradient(1px 1px at 130px 80px, #fff, rgba(0,0,0,0)),
+        radial-gradient(2px 2px at 90px 10px, #eee, rgba(0,0,0,0));
+      background-repeat: repeat;
+      background-size: 200px 200px;
+      animation: twinkle 5s infinite;
+    }
+
+    @keyframes twinkle {
+      0%, 100% { opacity: 0.7; }
+      50% { opacity: 1; }
+    }
+
+    /* Golden Chakra Animation */
+    .chakra-container {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 1;
+      opacity: 0.15;
+    }
+
+    .chakra {
+      width: 400px;
+      height: 400px;
+      border-radius: 50%;
+      border: 3px solid #FFD700;
+      position: relative;
+      animation: rotate 20s linear infinite;
+      box-shadow: 0 0 40px rgba(255, 215, 0, 0.6), inset 0 0 40px rgba(255, 215, 0, 0.3);
+    }
+
+    .chakra::before,
+    .chakra::after {
+      content: '';
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      border: 2px solid #FFA500;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+
+    .chakra::before {
+      width: 80%;
+      height: 80%;
+      animation: rotate 15s linear infinite reverse;
+    }
+
+    .chakra::after {
+      width: 60%;
+      height: 60%;
+      animation: rotate 10s linear infinite;
+    }
+
+    .chakra-symbol {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 150px;
+      color: #FFD700;
+      animation: pulse 3s ease-in-out infinite;
+    }
+
+    @keyframes rotate {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.8; }
+      50% { transform: translate(-50%, -50%) scale(1.1); opacity: 1; }
+    }
+
+    /* Content Container */
+    .content {
+      position: relative;
+      z-index: 10;
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 20px;
+      padding: 40px;
+      box-shadow: 0 20px 60px rgba(255, 215, 0, 0.3);
+      backdrop-filter: blur(10px);
+      border: 2px solid rgba(255, 215, 0, 0.3);
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 40px;
+      color: #0a1628;
+    }
+
+    .header h1 {
+      font-size: 2.5rem;
+      font-weight: bold;
+      background: linear-gradient(135deg, #0a1628 0%, #1a73e8 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 10px;
+    }
+
+    .header p {
+      color: #555;
+      font-size: 1.1rem;
+    }
+
+    .nav-buttons {
+      display: flex;
+      gap: 15px;
+      margin-bottom: 30px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .nav-btn {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 25px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-home {
+      background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+      color: #0a1628;
+      box-shadow: 0 4px 15px rgba(255, 215, 0, 0.4);
+    }
+
+    .btn-home:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(255, 215, 0, 0.6);
+    }
+
+    .test-form {
+      background: linear-gradient(135deg, rgba(10, 22, 40, 0.05) 0%, rgba(26, 115, 232, 0.05) 100%);
+      padding: 30px;
+      border-radius: 15px;
+      margin-bottom: 30px;
+      border: 2px solid rgba(255, 215, 0, 0.2);
+    }
+
+    .form-group {
+      margin-bottom: 25px;
+    }
+
+    .form-label {
+      display: block;
+      font-weight: 600;
+      color: #0a1628;
+      margin-bottom: 8px;
+      font-size: 1rem;
+    }
+
+    .form-input {
+      width: 100%;
+      padding: 12px 15px;
+      border: 2px solid #ddd;
+      border-radius: 10px;
+      font-size: 1rem;
+      transition: all 0.3s ease;
+      background: white;
+    }
+
+    .form-input:focus {
+      outline: none;
+      border-color: #FFD700;
+      box-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
+    }
+
+    .test-entry {
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      margin-bottom: 15px;
+      border: 2px solid rgba(26, 115, 232, 0.2);
+      transition: all 0.3s ease;
+    }
+
+    .test-entry:hover {
+      border-color: #FFD700;
+      box-shadow: 0 4px 15px rgba(255, 215, 0, 0.2);
+    }
+
+    .test-entry-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+    }
+
+    .test-entry-title {
+      font-weight: 700;
+      color: #0a1628;
+      font-size: 1.1rem;
+    }
+
+    .remove-btn {
+      background: linear-gradient(135deg, #ff4444 0%, #cc0000 100%);
+      color: white;
+      border: none;
+      padding: 8px 15px;
+      border-radius: 20px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      transition: all 0.3s ease;
+    }
+
+    .remove-btn:hover {
+      transform: scale(1.05);
+      box-shadow: 0 4px 10px rgba(255, 68, 68, 0.4);
+    }
+
+    .score-inputs {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+    }
+
+    .add-test-btn {
+      background: linear-gradient(135deg, #1a73e8 0%, #0b5cd5 100%);
+      color: white;
+      border: none;
+      padding: 15px 30px;
+      border-radius: 25px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 1rem;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin: 20px auto;
+    }
+
+    .add-test-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(26, 115, 232, 0.4);
+    }
+
+    .submit-btn {
+      background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+      color: #0a1628;
+      border: none;
+      padding: 15px 40px;
+      border-radius: 25px;
+      cursor: pointer;
+      font-weight: 700;
+      font-size: 1.1rem;
+      transition: all 0.3s ease;
+      display: block;
+      margin: 30px auto 0;
+      box-shadow: 0 6px 20px rgba(255, 215, 0, 0.4);
+    }
+
+    .submit-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 25px rgba(255, 215, 0, 0.6);
+    }
+
+    .summary-box {
+      background: linear-gradient(135deg, rgba(255, 215, 0, 0.1) 0%, rgba(255, 165, 0, 0.1) 100%);
+      padding: 20px;
+      border-radius: 15px;
+      margin-top: 30px;
+      border: 2px solid #FFD700;
+    }
+
+    .summary-title {
+      font-weight: 700;
+      color: #0a1628;
+      font-size: 1.3rem;
+      margin-bottom: 15px;
+      text-align: center;
+    }
+
+    .summary-stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 15px;
+    }
+
+    .stat-card {
+      background: white;
+      padding: 15px;
+      border-radius: 10px;
+      text-align: center;
+      border: 2px solid rgba(26, 115, 232, 0.2);
+    }
+
+    .stat-value {
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: #1a73e8;
+    }
+
+    .stat-label {
+      font-size: 0.9rem;
+      color: #666;
+      margin-top: 5px;
+    }
+
+    .alert {
+      padding: 15px 20px;
+      border-radius: 10px;
+      margin-bottom: 20px;
+      display: none;
+    }
+
+    .alert-success {
+      background: #d4edda;
+      color: #155724;
+      border: 2px solid #c3e6cb;
+    }
+
+    .alert-error {
+      background: #f8d7da;
+      color: #721c24;
+      border: 2px solid #f5c6cb;
+    }
+
+    @media (max-width: 768px) {
+      .container {
+        padding: 20px;
+      }
+
+      .header h1 {
+        font-size: 1.8rem;
+      }
+
+      .score-inputs {
+        grid-template-columns: 1fr;
+      }
+
+      .chakra {
+        width: 250px;
+        height: 250px;
+      }
+
+      .chakra-symbol {
+        font-size: 100px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Universe Background -->
+  <div class="universe-bg">
+    <div class="stars"></div>
+  </div>
+
+  <!-- Golden Chakra -->
+  <div class="chakra-container">
+    <div class="chakra">
+      <div class="chakra-symbol">☸</div>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <div class="content">
+    <form id="testScoresForm" class="test-form">
+      <div class="test-entries" id="testEntriesContainer">
+        <!-- Test entries will be added here -->
+      </div>
+      <div id="alertBox" class="alert" style="display: none;"></div>
+      <div class="header">
+        <h1>Test Results Input</h1>
+        <p>Enter your test scores to track your academic performance</p>
+      </div>
+
+      <div class="summary-box" id="summaryBox" style="display: none;">
+        <div class="summary-title">
+          <i class="fas fa-chart-pie"></i> Performance Summary
+        <div class="summary-box" id="summaryBox" style="display: none;">
+          <div class="summary-title">
+            <i class="fas fa-chart-pie"></i> Performance Summary
+          </div>
+          <div class="summary-stats">
+            <div class="stat-card">
+              <div class="stat-value" id="totalTests">0</div>
+              <div class="stat-label">Total Tests</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-value" id="avgPercentage">0%</div>
+              <div class="stat-label">Average Score</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-value" id="totalMarks">0</div>
+              <div class="stat-label">Total Marks</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-value" id="obtainedMarks">0</div>
+              <div class="stat-label">Marks Obtained</div>
+            </div>
+          </div>
+        </div>
+
+        <button type="submit" class="submit-btn" id="saveButton">
+          <i class="fas fa-save"></i> Save & Continue
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    let testCount = 0;
+
+    // Add initial test entry
+    window.onload = function() {
+      addTestEntry();
+    };
+
+    function addTestEntry() {
+      testCount++;
+      const container = document.getElementById('testEntriesContainer');
+      
+      const testEntry = document.createElement('div');
+      testEntry.className = 'test-entry';
+      testEntry.id = `test-${testCount}`;
+      
+      testEntry.innerHTML = `
+        <div class="test-entry-header">
+          <div class="test-entry-title">
+            <i class="fas fa-file-alt"></i> Test ${testCount}
+          </div>
+          <button type="button" class="remove-btn" onclick="removeTest(${testCount})" ${testCount === 1 ? 'style="display:none;"' : ''}>
+            <i class="fas fa-trash-alt"></i> Remove
+          </button>
+        </div>
+        
+        <div class="form-group">
+          <label class="form-label">
+            <i class="fas fa-tag"></i> Test Name/Subject *
+          </label>
+          <input type="text" class="form-input test-name" placeholder="e.g., Mathematics Mid-term" required>
+        </div>
+
+        <div class="score-inputs">
+          <div class="form-group">
+            <label class="form-label">
+              <i class="fas fa-trophy"></i> Maximum Marks *
+            </label>
+            <input type="number" class="form-input max-marks" placeholder="e.g., 100" min="1" required onchange="calculatePercentage(${testCount})">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">
+              <i class="fas fa-check-circle"></i> Marks Obtained *
+            </label>
+            <input type="number" class="form-input obtained-marks" placeholder="e.g., 85" min="0" required onchange="calculatePercentage(${testCount})">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">
+            <i class="fas fa-percent"></i> Percentage
+          </label>
+          <input type="text" class="form-input percentage-display" readonly style="background: #f0f0f0; font-weight: 600; color: #1a73e8;">
+        </div>
+      `;
+      
+      container.appendChild(testEntry);
+      updateSummary();
+    }
+
+    function removeTest(id) {
+      const testEntry = document.getElementById(`test-${id}`);
+      if (testEntry) {
+        testEntry.remove();
+        updateSummary();
+      }
+    }
+
+    function calculatePercentage(id) {
+      const testEntry = document.getElementById(`test-${id}`);
+      const maxMarks = parseFloat(testEntry.querySelector('.max-marks').value) || 0;
+      const obtainedMarks = parseFloat(testEntry.querySelector('.obtained-marks').value) || 0;
+      const percentageDisplay = testEntry.querySelector('.percentage-display');
+
+      if (maxMarks > 0 && obtainedMarks >= 0) {
+        if (obtainedMarks > maxMarks) {
+          showAlert('Obtained marks cannot be greater than maximum marks!', 'error');
+          testEntry.querySelector('.obtained-marks').value = '';
+          percentageDisplay.value = '';
+          return;
+        }
+        const percentage = ((obtainedMarks / maxMarks) * 100).toFixed(2);
+        percentageDisplay.value = `${percentage}%`;
+        updateSummary();
+      }
+    }
+
+    function updateSummary() {
+      const testEntries = document.querySelectorAll('.test-entry');
+      let totalTests = testEntries.length;
+      let totalMax = 0;
+      let totalObtained = 0;
+
+      testEntries.forEach(entry => {
+        const maxMarks = parseFloat(entry.querySelector('.max-marks').value) || 0;
+        const obtainedMarks = parseFloat(entry.querySelector('.obtained-marks').value) || 0;
+        totalMax += maxMarks;
+        totalObtained += obtainedMarks;
+      });
+
+      const avgPercentage = totalMax > 0 ? ((totalObtained / totalMax) * 100).toFixed(2) : 0;
+
+      document.getElementById('totalTests').textContent = totalTests;
+      document.getElementById('avgPercentage').textContent = `${avgPercentage}%`;
+      document.getElementById('totalMarks').textContent = totalMax;
+      document.getElementById('obtainedMarks').textContent = totalObtained;
+
+      if (totalTests > 0) {
+        document.getElementById('summaryBox').style.display = 'block';
+      }
+    }
+
+    function showAlert(message, type) {
+      const alertBox = document.getElementById('alertBox');
+      alertBox.textContent = message;
+      alertBox.className = `alert alert-${type}`;
+      alertBox.style.display = 'block';
+      
+      setTimeout(() => {
+        alertBox.style.display = 'none';
+      }, 4000);
+    }
+
+    // Add debug logs
+    console.log('Initializing test scores form...');
+    
+    const form = document.getElementById('testScoresForm');
+    if (!form) {
+      console.error('Test scores form not found!');
+    } else {
+      console.log('Form found, adding submit listener...');
+    }
+    
+    // Add form submission handler with more detailed logging
+    form.addEventListener('submit', async function(e) {
+      e.preventDefault();
+      console.log('Form submission started');
+      
+      const testEntries = document.querySelectorAll('.test-entry');
+      console.log('Number of test entries found:', testEntries.length);
+      
+      if (testEntries.length === 0) {
+        const errorMsg = 'Please add at least one test score!';
+        console.warn(errorMsg);
+        showAlert(errorMsg, 'error');
+        return;
+      }
+
+      const testScores = [];
+      let isValid = true;
+
+      testEntries.forEach(entry => {
+        const testName = entry.querySelector('.test-name').value.trim();
+        const maxMarks = parseFloat(entry.querySelector('.max-marks').value);
+        const obtainedMarks = parseFloat(entry.querySelector('.obtained-marks').value);
+
+        if (!testName || !maxMarks || obtainedMarks === undefined || obtainedMarks === null) {
+          isValid = false;
+          return;
+        }
+
+        if (obtainedMarks > maxMarks) {
+          isValid = false;
+          showAlert('Obtained marks cannot be greater than maximum marks!', 'error');
+          return;
+        }
+
+        const percentage = ((obtainedMarks / maxMarks) * 100).toFixed(2);
+        testScores.push({
+          name: testName,
+          maxMarks: maxMarks,
+          obtainedMarks: obtainedMarks,
+          percentage: percentage,
+          timestamp: new Date().toISOString()
+        });
+      });
+
+      if (!isValid) {
+        showAlert('Please fill all test details correctly!', 'error');
+        return;
+      }
+
+      // Show loading state
+      const saveButton = document.getElementById('saveButton');
+      if (!saveButton) {
+        console.error('Save button not found!');
+        return;
+      }
+      
+      const originalButtonText = saveButton.innerHTML;
+      saveButton.disabled = true;
+      saveButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
+      
+      console.log('Save button state updated');
+
+      try {
+        console.log('Starting Firebase operations...');
+        
+        // Check Firebase initialization
+        if (!window.firebaseApp) {
+          throw new Error('Firebase not initialized');
+        }
+        
+        const { auth, firestore } = window.firebaseApp;
+        console.log('Firebase auth and firestore:', { auth, firestore });
+        
+        if (!auth || !firestore) {
+          throw new Error('Firebase auth or firestore not available');
+        }
+        console.log('Firebase auth and firestore:', { auth, firestore });
+        
+        if (!auth || !firestore) {
+          throw new Error('Firebase auth or firestore not available');
+        }
+        const user = auth.currentUser;
+        
+        if (!user) {
+          throw new Error('User not authenticated');
+        }
+
+        // Prepare data for Firestore
+        const testSummary = {
+          totalTests: testScores.length,
+          totalMaxMarks: testScores.reduce((sum, test) => sum + test.maxMarks, 0),
+          totalObtainedMarks: testScores.reduce((sum, test) => sum + test.obtainedMarks, 0),
+          averagePercentage: (testScores.reduce((sum, test) => sum + parseFloat(test.percentage), 0) / testScores.length).toFixed(2),
+          lastUpdated: new Date().toISOString()
+        };
+
+        // Save summary to user document in Firestore
+        console.log('Saving summary to Firestore user document...');
+        const userRef = firestore.doc('users', user.uid);
+        const dataToSave = {
+          testScores: testScores,
+          testSummary: testSummary,
+          lastUpdated: new Date().toISOString(),
+          studentId: user.uid,
+          studentEmail: user.email || '',
+          studentName: user.displayName || user.email?.split('@')[0] || 'Student'
+        };
+        
+        console.log('Data to save in user doc:', dataToSave);
+        await firestore.setDoc(userRef, dataToSave, { merge: true });
+        console.log('User document updated with test summary');
+
+        // Also save each test as a separate document in quizResults collection
+        console.log('Saving individual test scores to quizResults collection...');
+        const quizResultsCollection = firestore.collection('quizResults');
+        for (const test of testScores) {
+          const quizDoc = {
+            userId: user.uid,
+            userEmail: user.email || '',
+            userName: user.displayName || user.email?.split('@')[0] || 'Student',
+            subject: test.name,
+            score: test.obtainedMarks,
+            maxScore: test.maxMarks,
+            percentage: parseFloat(test.percentage),
+            timestamp: new Date(),
+          };
+          console.log('Adding quiz result doc:', quizDoc);
+          await firestore.addDoc(quizResultsCollection, quizDoc);
+        }
+        console.log('All quizResults documents saved successfully');
+
+        // Also save to localStorage as fallback
+        const savedData = JSON.parse(localStorage.getItem('studentPerformanceData') || '{}');
+        savedData.testScores = testScores;
+        savedData.testSummary = testSummary;
+        localStorage.setItem('studentPerformanceData', JSON.stringify(savedData));
+
+        showAlert('Test scores saved successfully! Redirecting...', 'success');
+        setTimeout(() => {
+          window.location.href = 'events.html';
+        }, 1500);
+
+      } catch (error) {
+        console.error('Error saving test scores:', error);
+        console.error('Error details:', {
+          name: error.name,
+          message: error.message,
+          stack: error.stack,
+          code: error.code,
+          details: error.details
+        });
+        
+        let errorMessage = 'Failed to save test scores';
+        if (error.code === 'permission-denied') {
+          errorMessage += ': Permission denied. Make sure your Firestore security rules allow this write.';
+        } else if (error.message) {
+          errorMessage += `: ${error.message}`;
+        }
+        
+        showAlert(errorMessage, 'error');
+        
+        // Restore button state
+        saveButton.disabled = false;
+        saveButton.innerHTML = originalButtonText;
+      }
+    });
+
+    // Load saved data if exists
+    window.addEventListener('load', async function() {
+      // Check if user is authenticated
+      const { auth, firestore } = window.firebaseApp || {};
+      if (auth) {
+        try {
+          const user = auth.currentUser;
+          if (user) {
+            // Try to load from Firestore first
+            const userRef = firestore.doc('users', user.uid);
+            const docSnap = await firestore.getDoc(userRef);
+            
+            if (docSnap.exists()) {
+              const data = docSnap.data();
+              if (data.testScores && data.testScores.length > 0) {
+                // Clear existing entries
+                document.getElementById('testEntriesContainer').innerHTML = '';
+                testCount = 0;
+
+                // Add entries from Firestore
+                data.testScores.forEach((test, index) => {
+                  addTestEntry();
+                  const entry = document.querySelectorAll('.test-entry')[index];
+                  if (entry) {
+                    entry.querySelector('.test-name').value = test.name || '';
+                    entry.querySelector('.max-marks').value = test.maxMarks || '';
+                    entry.querySelector('.obtained-marks').value = test.obtainedMarks || '';
+                    calculatePercentage(index + 1);
+                  }
+                });
+                return; // Exit after loading from Firestore
+              }
+            }
+          }
+        } catch (error) {
+          console.error('Error loading from Firestore:', error);
+          // Continue to load from localStorage if Firestore fails
+        }
+      }
+      
+      // Fallback to localStorage if Firestore is not available or has no data
+      const savedData = JSON.parse(localStorage.getItem('studentPerformanceData') || '{}');
+      if (savedData.testScores && savedData.testScores.length > 0) {
+        // Clear existing entries
+        document.getElementById('testEntriesContainer').innerHTML = '';
+        testCount = 0;
+
+        // Add saved entries
+        savedData.testScores.forEach((test, index) => {
+          addTestEntry();
+          const entry = document.querySelectorAll('.test-entry')[index];
+          entry.querySelector('.test-name').value = test.name;
+          entry.querySelector('.max-marks').value = test.maxMarks;
+          entry.querySelector('.obtained-marks').value = test.obtainedMarks;
+          calculatePercentage(index + 1);
+        });
+      }
+    });
+  </script>
+</body>
+</html>
